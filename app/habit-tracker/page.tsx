@@ -413,13 +413,16 @@ export default function HabitTrackerPage() {
       const base = (existing && existing.length>0) ? existing : DEFAULT_CATS(ds);
       const newCats = fn(base);
       const newStore = { ...p,[ds]:{ categories:newCats } };
-      // Save to localStorage immediately
       try { localStorage.setItem(STORAGE_KEY, JSON.stringify(newStore)); } catch(e){}
-      // Save to Supabase immediately using ref
-      if (userIdRef.current) {
-        saveHabits(userIdRef.current, newStore).then(({error}) => {
-          if (error) console.error("Save error:", error);
+      // Use ref to save - always has latest userId
+      const uid = userIdRef.current;
+      if (uid) {
+        saveHabits(uid, newStore).then(r => {
+          if (r.error) console.error("Supabase save failed:", r.error.message);
+          else console.log("Saved to Supabase ok");
         });
+      } else {
+        console.warn("No userId - not saving to Supabase");
       }
       return newStore;
     });
