@@ -251,8 +251,9 @@ export default function IntrospectionPage() {
   useEffect(() => {
     // Clear old shared localStorage immediately
     try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
-    // Start empty until we know who is logged in
-    setBlocksRaw(DEFAULT_BLOCKS);
+    // Start completely empty until Supabase loads
+    setBlocksRaw([]);
+    setLoaded(false);
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!session) { window.location.href = "/login"; return; }
@@ -275,8 +276,9 @@ export default function IntrospectionPage() {
               setBlocksRaw(local);
               saveIntrospection(uid, local);
             }
-            // else: new user, keep DEFAULT_BLOCKS
-          } catch(e) {}
+            // else: brand new user, set default blocks
+            setBlocksRaw(DEFAULT_BLOCKS);
+          } catch(e) { setBlocksRaw(DEFAULT_BLOCKS); }
         }
         setLoaded(true);
       });
