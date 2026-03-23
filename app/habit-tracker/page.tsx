@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState, useCallback, useMemo, useRef, useEffect } from "react";
+import { supabase } from "@/lib/supabase";
+import { loadHabits, saveHabits } from "@/lib/habitsDb";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 type Habit    = { id: string; label: string; done: boolean };
@@ -341,16 +343,32 @@ export default function HabitTrackerPage() {
   const [selMonth, setSelMonth] = useState(now.getMonth());
   const [selWeek,  setSelWeek]  = useState(0);
   const [store,    setStore]    = useState<Record<string,{categories:Category[]}>>({});
+  const [userId,   setUserId]   = useState<string|null>(null);
+  const saveTimer = useRef<any>(null);
 
-  // ── Load from localStorage on mount ──
+  // ── Load from localStorage instantly, then sync from Supabase ──
   useEffect(()=>{
+    // Show cached data instantly
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) setStore(JSON.parse(raw));
     } catch(e) {}
+
+    // Auth + fetch from Supabase
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) return;
+      const uid = session.user.id;
+      setUserId(uid);
+      loadHabits(uid).then(dbStore => {
+        if (dbStore && Object.keys(dbStore).length > 0) {
+          setStore(dbStore);
+          try { localStorage.setItem(STORAGE_KEY, JSON.stringify(dbStore)); } catch(e) {}
+        }
+      });
+    });
   },[]);
 
-  // Save handled directly in updateDay for instant persistence
+  // Save to Supabase debounced
 
   const weeksInMonth     = useMemo(()=>getWeeksInMonth(selYear,selMonth),[selYear,selMonth]);
   const safeWeek         = Math.min(selWeek, weeksInMonth.length-1);
@@ -368,8 +386,15 @@ export default function HabitTrackerPage() {
       const base = (existing && existing.length>0) ? existing : DEFAULT_CATS(ds);
       const newCats = fn(base);
       const newStore = { ...p,[ds]:{ categories:newCats } };
-      // Save immediately — don't wait for useEffect
+      // Save to localStorage immediately
       try { localStorage.setItem(STORAGE_KEY, JSON.stringify(newStore)); } catch(e){}
+      // Debounce Supabase save 1.5s
+      if (saveTimer.current) clearTimeout(saveTimer.current);
+      saveTimer.current = setTimeout(() => {
+        supabase.auth.getSession().then(({ data: { session } }) => {
+          if (session) saveHabits(session.user.id, newStore);
+        });
+      }, 1500);
       return newStore;
     });
   },[]);

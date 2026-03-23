@@ -432,3 +432,14 @@ img, video { max-width:100%; }
   .sys-card p { display: none !important; }
   .sys-card > div > div:nth-child(3) { display: none !important; }
 }
+
+/* Fix - show analytics charts on mobile too */
+@media (max-width: 768px) {
+  .analytics-line-chart { display:block !important; }
+  .analytics-bar-chart  { display:block !important; }
+  .analytics-divider    { display:none !important; }
+  .habit-tracker-analytics {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+}
