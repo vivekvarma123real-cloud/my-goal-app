@@ -346,31 +346,50 @@ export default function HabitTrackerPage() {
   const [userId,   setUserId]   = useState<string|null>(null);
   const saveTimer = useRef<any>(null);
 
-  // ── Load from localStorage instantly, then sync from Supabase ──
+  // ── Load + realtime sync ──
   useEffect(()=>{
-    // Load local cache first for instant display
+    let channel: any = null;
+
+    // Show local cache instantly
     let localStore: any = null;
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) { localStore = JSON.parse(raw); setStore(localStore); }
     } catch(e) {}
 
-    // Auth + fetch from Supabase
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!session) return;
       const uid = session.user.id;
       setUserId(uid);
+
+      // Initial load from Supabase
       loadHabits(uid).then(dbStore => {
         if (dbStore && Object.keys(dbStore).length > 0) {
-          // DB has data — use it (most up to date)
           setStore(dbStore);
           try { localStorage.setItem(STORAGE_KEY, JSON.stringify(dbStore)); } catch(e) {}
         } else if (localStore && Object.keys(localStore).length > 0) {
-          // DB empty but local has data — upload local to DB
           saveHabits(uid, localStore);
         }
       });
+
+      // Realtime subscription — listen for changes from other devices
+      channel = supabase
+        .channel('habits-sync')
+        .on('postgres_changes', {
+          event: '*',
+          schema: 'public',
+          table: 'habits_store',
+          filter: `user_id=eq.${uid}`,
+        }, (payload: any) => {
+          if (payload.new?.store) {
+            setStore(payload.new.store);
+            try { localStorage.setItem(STORAGE_KEY, JSON.stringify(payload.new.store)); } catch(e) {}
+          }
+        })
+        .subscribe();
     });
+
+    return () => { if (channel) supabase.removeChannel(channel); };
   },[]);
 
   // Save to Supabase debounced
