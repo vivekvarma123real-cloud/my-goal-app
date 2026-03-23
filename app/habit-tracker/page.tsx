@@ -351,30 +351,36 @@ export default function HabitTrackerPage() {
   useEffect(()=>{
     let channel: any = null;
 
+    // Clear old shared localStorage key (was causing cross-user data leak)
+    try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
+    // Always start with empty store until we know who is logged in
+    setStore({});
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!session) return;
       const uid = session.user.id;
       setUserId(uid);
       userIdRef.current = uid;
 
-      // Use user-specific localStorage key so different users don't share data
       const userKey = STORAGE_KEY + "-" + uid;
 
-      // Show this user's local cache instantly
-      let localStore: any = null;
-      try {
-        const raw = localStorage.getItem(userKey);
-        if (raw) { localStore = JSON.parse(raw); setStore(localStore); }
-        else { setStore({}); } // clear any previous user's data
-      } catch(e) {}
-
-      // Load from Supabase (source of truth)
+      // ALWAYS load from Supabase first — it's the source of truth
       loadHabits(uid).then(dbStore => {
         if (dbStore && Object.keys(dbStore).length > 0) {
+          // Use Supabase data
           setStore(dbStore);
           try { localStorage.setItem(userKey, JSON.stringify(dbStore)); } catch(e) {}
-        } else if (localStore && Object.keys(localStore).length > 0) {
-          saveHabits(uid, localStore);
+        } else {
+          // New user — check if they have local data under their key
+          try {
+            const raw = localStorage.getItem(userKey);
+            if (raw) {
+              const localStore = JSON.parse(raw);
+              setStore(localStore);
+              saveHabits(uid, localStore);
+            }
+            // else: brand new user, store stays empty {}
+          } catch(e) {}
         }
       });
 
