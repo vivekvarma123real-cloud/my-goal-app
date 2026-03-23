@@ -351,25 +351,28 @@ export default function HabitTrackerPage() {
   useEffect(()=>{
     let channel: any = null;
 
-    // Show local cache instantly
-    let localStore: any = null;
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) { localStore = JSON.parse(raw); setStore(localStore); }
-    } catch(e) {}
-
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!session) return;
       const uid = session.user.id;
       setUserId(uid);
       userIdRef.current = uid;
-      userIdRef.current = uid;
 
-      // Initial load from Supabase
+      // Use user-specific localStorage key so different users don't share data
+      const userKey = STORAGE_KEY + "-" + uid;
+
+      // Show this user's local cache instantly
+      let localStore: any = null;
+      try {
+        const raw = localStorage.getItem(userKey);
+        if (raw) { localStore = JSON.parse(raw); setStore(localStore); }
+        else { setStore({}); } // clear any previous user's data
+      } catch(e) {}
+
+      // Load from Supabase (source of truth)
       loadHabits(uid).then(dbStore => {
         if (dbStore && Object.keys(dbStore).length > 0) {
           setStore(dbStore);
-          try { localStorage.setItem(STORAGE_KEY, JSON.stringify(dbStore)); } catch(e) {}
+          try { localStorage.setItem(userKey, JSON.stringify(dbStore)); } catch(e) {}
         } else if (localStore && Object.keys(localStore).length > 0) {
           saveHabits(uid, localStore);
         }
@@ -386,7 +389,7 @@ export default function HabitTrackerPage() {
         }, (payload: any) => {
           if (payload.new?.store) {
             setStore(payload.new.store);
-            try { localStorage.setItem(STORAGE_KEY, JSON.stringify(payload.new.store)); } catch(e) {}
+            const k = STORAGE_KEY+'-'+uid; try { localStorage.setItem(k, JSON.stringify(payload.new.store)); } catch(e) {}
           }
         })
         .subscribe();
@@ -413,9 +416,9 @@ export default function HabitTrackerPage() {
       const base = (existing && existing.length>0) ? existing : DEFAULT_CATS(ds);
       const newCats = fn(base);
       const newStore = { ...p,[ds]:{ categories:newCats } };
-      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(newStore)); } catch(e){}
-      // Use ref to save - always has latest userId
       const uid = userIdRef.current;
+      const userKey = uid ? STORAGE_KEY + "-" + uid : STORAGE_KEY;
+      try { localStorage.setItem(userKey, JSON.stringify(newStore)); } catch(e){}
       if (uid) {
         saveHabits(uid, newStore).then(r => {
           if (r.error) console.error("Supabase save failed:", r.error.message);
