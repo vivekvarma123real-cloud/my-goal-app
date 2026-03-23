@@ -77,7 +77,7 @@ export default function LandingPage() {
   const handleSignOut = async () => { await supabase.auth.signOut(); setIsLoggedIn(false); };
   // Load public feedback
   useEffect(() => {
-    fetchFeedback().then(data => setFeedbackList(data.slice(0, 10)));
+    fetchFeedback().then(data => { console.log("Feedback loaded:", data.length, data); setFeedbackList(data.slice(0, 10)); });
   }, []);
 
   const submitFb = async () => {
@@ -88,7 +88,7 @@ export default function LandingPage() {
     if (!error) {
       setFbSuccess(true);
       setFbName(""); setFbMessage(""); setFbRating(5); setFbFeature("General");
-      fetchFeedback().then(data => setFeedbackList(data.slice(0, 10)));
+      fetchFeedback().then(data => { console.log("Feedback loaded:", data.length, data); setFeedbackList(data.slice(0, 10)); });
       setTimeout(() => setFbSuccess(false), 3000);
     }
   };
@@ -253,9 +253,9 @@ export default function LandingPage() {
             <h2 style={{fontFamily:"'Poppins',sans-serif",fontWeight:900,fontSize:"clamp(2rem,4vw,3.2rem)",color:"#fff",margin:0}}>Choose your system</h2>
           </div>
 
-          <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:16}}>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(min(220px,100%),1fr))",gap:14}}>
             {/* Goal Planner */}
-            <div className="sys-card" style={{background:"rgba(255,106,0,0.04)",border:"1px solid rgba(255,106,0,0.14)",borderRadius:18,padding:"28px 22px",position:"relative",overflow:"hidden"}}
+            <div className="sys-card" style={{background:"rgba(255,106,0,0.04)",border:"1px solid rgba(255,106,0,0.14)",borderRadius:18,padding:"clamp(16px,3vw,28px) clamp(14px,2.5vw,22px)",position:"relative",overflow:"hidden"}}
               onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background="rgba(255,106,0,0.09)";(e.currentTarget as HTMLElement).style.borderColor="rgba(255,106,0,0.35)";(e.currentTarget as HTMLElement).style.boxShadow="0 24px 60px rgba(255,106,0,0.12)";}}
               onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background="rgba(255,106,0,0.04)";(e.currentTarget as HTMLElement).style.borderColor="rgba(255,106,0,0.14)";(e.currentTarget as HTMLElement).style.boxShadow="none";}}
             >
@@ -282,7 +282,7 @@ export default function LandingPage() {
             </div>
 
             {/* Habit Tracker */}
-            <div className="sys-card" style={{background:"rgba(195,107,255,0.04)",border:"1px solid rgba(195,107,255,0.14)",borderRadius:18,padding:"28px 22px",position:"relative",overflow:"hidden"}}
+            <div className="sys-card" style={{background:"rgba(195,107,255,0.04)",border:"1px solid rgba(195,107,255,0.14)",borderRadius:18,padding:"clamp(16px,3vw,28px) clamp(14px,2.5vw,22px)",position:"relative",overflow:"hidden"}}
               onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background="rgba(195,107,255,0.09)";(e.currentTarget as HTMLElement).style.borderColor="rgba(195,107,255,0.35)";(e.currentTarget as HTMLElement).style.boxShadow="0 24px 60px rgba(195,107,255,0.12)";}}
               onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background="rgba(195,107,255,0.04)";(e.currentTarget as HTMLElement).style.borderColor="rgba(195,107,255,0.14)";(e.currentTarget as HTMLElement).style.boxShadow="none";}}
             >
@@ -309,7 +309,7 @@ export default function LandingPage() {
             </div>
 
             {/* Battle Manual */}
-            <div className="sys-card" style={{background:"rgba(255,59,59,0.04)",border:"1px solid rgba(255,59,59,0.14)",borderRadius:18,padding:"28px 22px",position:"relative",overflow:"hidden"}}
+            <div className="sys-card" style={{background:"rgba(255,59,59,0.04)",border:"1px solid rgba(255,59,59,0.14)",borderRadius:18,padding:"clamp(16px,3vw,28px) clamp(14px,2.5vw,22px)",position:"relative",overflow:"hidden"}}
               onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background="rgba(255,59,59,0.09)";(e.currentTarget as HTMLElement).style.borderColor="rgba(255,59,59,0.35)";(e.currentTarget as HTMLElement).style.boxShadow="0 24px 60px rgba(255,59,59,0.12)";}}
               onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background="rgba(255,59,59,0.04)";(e.currentTarget as HTMLElement).style.borderColor="rgba(255,59,59,0.14)";(e.currentTarget as HTMLElement).style.boxShadow="none";}}
             >
@@ -337,7 +337,7 @@ export default function LandingPage() {
             </div>
 
             {/* Introspection */}
-            <div className="sys-card" style={{background:"rgba(74,222,128,0.04)",border:"1px solid rgba(74,222,128,0.14)",borderRadius:18,padding:"28px 22px",position:"relative",overflow:"hidden"}}
+            <div className="sys-card" style={{background:"rgba(74,222,128,0.04)",border:"1px solid rgba(74,222,128,0.14)",borderRadius:18,padding:"clamp(16px,3vw,28px) clamp(14px,2.5vw,22px)",position:"relative",overflow:"hidden"}}
               onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background="rgba(74,222,128,0.09)";(e.currentTarget as HTMLElement).style.borderColor="rgba(74,222,128,0.35)";(e.currentTarget as HTMLElement).style.boxShadow="0 24px 60px rgba(74,222,128,0.12)";}}
               onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background="rgba(74,222,128,0.04)";(e.currentTarget as HTMLElement).style.borderColor="rgba(74,222,128,0.14)";(e.currentTarget as HTMLElement).style.boxShadow="none";}}
             >
