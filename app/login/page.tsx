@@ -53,7 +53,7 @@ export default function LoginPage() {
 
     // Success — redirect to choose page
     setTimeout(() => {
-      window.location.href = "http://localhost:3000/choose";
+      window.location.href = "/choose";
     }, 500);
   };
 
