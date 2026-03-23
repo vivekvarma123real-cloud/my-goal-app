@@ -401,3 +401,34 @@ img, video { max-width:100%; }
 @media (max-width: 768px) {
   .goal-planner-add-btn { display: block !important; }
 }
+
+/* ── Landing page systems cards mobile ──────────────────────────────────── */
+@media (max-width: 640px) {
+  .sys-card {
+    padding: 16px !important;
+    text-align: left !important;
+  }
+  .sys-card .sys-icon {
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 12px !important;
+    margin: 0 !important;
+    flex-shrink: 0;
+  }
+  .sys-card .sys-body {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    margin-bottom: 8px !important;
+  }
+  .sys-card .sys-desc { display: none !important; }
+  .sys-card .sys-tags { display: none !important; }
+  .sys-card .sys-cta { display: none !important; }
+}
+
+/* Systems cards - hide verbose content on small mobile */
+@media (max-width: 480px) {
+  .sys-card { padding: 18px 16px !important; }
+  .sys-card p { display: none !important; }
+  .sys-card > div > div:nth-child(3) { display: none !important; }
+}
