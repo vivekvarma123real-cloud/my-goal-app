@@ -247,23 +247,36 @@ export default function IntrospectionPage() {
   const [mode, setMode] = useState<"read" | "edit">("read");
   const [loaded, setLoaded] = useState(false);
 
-  // Load from Supabase (with localStorage fallback for speed)
+  // Load from Supabase first — source of truth
   useEffect(() => {
-    // Show cached instantly
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) setBlocksRaw(JSON.parse(raw));
-    } catch(e) {}
+    // Clear old shared localStorage immediately
+    try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
+    // Start empty until we know who is logged in
+    setBlocksRaw(DEFAULT_BLOCKS);
 
-    // Auth + fetch from DB
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!session) { window.location.href = "/login"; return; }
       const uid = session.user.id;
       setUserId(uid);
+
+      const userKey = STORAGE_KEY + "-" + uid;
+
+      // Always load from Supabase first
       loadIntrospection(uid).then(dbBlocks => {
         if (dbBlocks && dbBlocks.length > 0) {
           setBlocksRaw(dbBlocks);
-          try { localStorage.setItem(STORAGE_KEY, JSON.stringify(dbBlocks)); } catch(e) {}
+          try { localStorage.setItem(userKey, JSON.stringify(dbBlocks)); } catch(e) {}
+        } else {
+          // Check user-specific local cache
+          try {
+            const raw = localStorage.getItem(userKey);
+            if (raw) {
+              const local = JSON.parse(raw);
+              setBlocksRaw(local);
+              saveIntrospection(uid, local);
+            }
+            // else: new user, keep DEFAULT_BLOCKS
+          } catch(e) {}
         }
         setLoaded(true);
       });
@@ -273,7 +286,13 @@ export default function IntrospectionPage() {
   // Auto-save: localStorage instantly + Supabase debounced 2s
   const setBlocks = useCallback((b: Block[]) => {
     setBlocksRaw(b);
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(b)); } catch(e) {}
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      const uid = session?.user?.id;
+      if (uid) {
+        const userKey = STORAGE_KEY + "-" + uid;
+        try { localStorage.setItem(userKey, JSON.stringify(b)); } catch(e) {}
+      }
+    });
     // Debounce Supabase save — don't save on every keystroke
     if (saveTimer.current) clearTimeout(saveTimer.current);
     setSaving(true);
