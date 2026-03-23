@@ -344,6 +344,7 @@ export default function HabitTrackerPage() {
   const [selWeek,  setSelWeek]  = useState(0);
   const [store,    setStore]    = useState<Record<string,{categories:Category[]}>>({});
   const [userId,   setUserId]   = useState<string|null>(null);
+  const userIdRef = useRef<string|null>(null);
   const saveTimer = useRef<any>(null);
 
   // ── Load + realtime sync ──
@@ -361,6 +362,8 @@ export default function HabitTrackerPage() {
       if (!session) return;
       const uid = session.user.id;
       setUserId(uid);
+      userIdRef.current = uid;
+      userIdRef.current = uid;
 
       // Initial load from Supabase
       loadHabits(uid).then(dbStore => {
@@ -412,13 +415,12 @@ export default function HabitTrackerPage() {
       const newStore = { ...p,[ds]:{ categories:newCats } };
       // Save to localStorage immediately
       try { localStorage.setItem(STORAGE_KEY, JSON.stringify(newStore)); } catch(e){}
-      // Debounce Supabase save 1.5s
-      if (saveTimer.current) clearTimeout(saveTimer.current);
-      saveTimer.current = setTimeout(() => {
-        supabase.auth.getSession().then(({ data: { session } }) => {
-          if (session) saveHabits(session.user.id, newStore);
+      // Save to Supabase immediately using ref
+      if (userIdRef.current) {
+        saveHabits(userIdRef.current, newStore).then(({error}) => {
+          if (error) console.error("Save error:", error);
         });
-      }, 1500);
+      }
       return newStore;
     });
   },[]);
