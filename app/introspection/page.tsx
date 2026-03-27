@@ -71,7 +71,7 @@ function ReadMode({ blocks, onEdit }: { blocks: Block[]; onEdit: () => void }) {
   const progress = ((current + 1) / filled.length) * 100;
 
   return (
-    <div style={{ maxWidth:680, margin:"0 auto", padding:"0 0 80px" }}>
+    <div style={{ maxWidth:1100, margin:"0 auto", padding:"0 0 80px" }}>
       <style>{`
         @keyframes fadeSlide{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
         @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
@@ -160,7 +160,7 @@ function EditMode({ blocks, setBlocks, onRead, saving }: { blocks: Block[]; setB
   ];
 
   return (
-    <div style={{ maxWidth:720, margin:"0 auto", padding:"0 0 120px" }}>
+    <div style={{ maxWidth:1100, margin:"0 auto", padding:"0 0 120px" }}>
       <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
         {blocks.map((block, i) => {
           const color = block.color;
@@ -327,7 +327,7 @@ export default function IntrospectionPage() {
 
       {/* Header */}
       <header style={{ position:"sticky", top:0, zIndex:100, background:"rgba(7,7,15,0.97)", backdropFilter:"blur(20px)", borderBottom:"1px solid rgba(255,255,255,0.06)", padding:"12px 20px" }}>
-        <div style={{ maxWidth:720, margin:"0 auto", display:"flex", alignItems:"center", justifyContent:"space-between" }}>
+        <div style={{ maxWidth:1100, margin:"0 auto", display:"flex", alignItems:"center", justifyContent:"space-between" }}>
           <div style={{ display:"flex", alignItems:"center", gap:12 }}>
             <button onClick={()=>window.location.href="/choose"} style={{ background:"none", border:"1px solid rgba(255,255,255,0.1)", borderRadius:8, color:"rgba(255,255,255,0.4)", padding:"5px 12px", cursor:"pointer", fontFamily:"'Poppins',sans-serif", fontSize:"0.7rem", fontWeight:600, transition:"all 0.2s" }}
               onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.color="#FF6A00";(e.currentTarget as HTMLElement).style.borderColor="rgba(255,106,0,0.4)";}}
@@ -352,7 +352,7 @@ export default function IntrospectionPage() {
       </header>
 
       {/* Date greeting */}
-      <div style={{ maxWidth:720, margin:"0 auto", padding:"28px 20px 16px" }}>
+      <div style={{ maxWidth:1100, margin:"0 auto", padding:"28px 20px 16px" }}>
         <div style={{ animation:"fadeUp 0.5s ease both" }}>
           <p style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.72rem", color:"rgba(255,255,255,0.25)", margin:"0 0 4px", letterSpacing:"0.08em" }}>{today}</p>
           <h1 style={{ fontFamily:"'Poppins',sans-serif", fontWeight:900, fontSize:"clamp(1.4rem,4vw,1.9rem)", color:"#fff", margin:"0 0 24px", lineHeight:1.1 }}>
