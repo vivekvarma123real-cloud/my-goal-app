@@ -18,6 +18,8 @@
   --bg-card:     #0f0f1c;
   --bg-row:      #141428;
   --bg-input:    #1a1a30;
+  --bg-subtle:   rgba(255,255,255,0.04);
+  --bg-hover:    rgba(255,255,255,0.08);
 
   /* Text */
   --text:        #ffffff;
@@ -29,13 +31,13 @@
   --border-act:  rgba(195,107,255,0.4);
 
   /* Day header tints — all in purple/blue/cyan family */
-  --day-mon:     #1e1040;   /* deep violet */
-  --day-tue:     #0e1a40;   /* deep navy */
-  --day-wed:     #0a1e3a;   /* deep blue */
-  --day-thu:     #0d2040;   /* cobalt */
-  --day-fri:     #1a0e40;   /* indigo */
-  --day-sat:     #22083a;   /* dark purple */
-  --day-sun:     #180840;   /* midnight purple */
+  --day-mon:     #1e1040;   
+  --day-tue:     #0e1a40;   
+  --day-wed:     #0a1e3a;   
+  --day-thu:     #0d2040;   
+  --day-fri:     #1a0e40;   
+  --day-sat:     #22083a;   
+  --day-sun:     #180840;   
 
   /* Accent dots — from the gradient */
   --dot-mon:     #C36BFF;
@@ -46,6 +48,60 @@
   --dot-sat:     #28D7FF;
   --dot-sun:     #9e7dff;
 }
+
+[data-theme='light'] {
+  /* Backgrounds */
+  --bg:          #f5f5f5;
+  --bg-card:     #ffffff;
+  --bg-row:      #f0f0f0;
+  --bg-input:    #ffffff;
+  --bg-subtle:   rgba(0,0,0,0.04);
+  --bg-hover:    rgba(0,0,0,0.08);
+
+  /* Text */
+  --text:        #111111;
+  --text-sub:    #444444;
+  --text-muted:  #888888;
+
+  /* Borders */
+  --border:      rgba(0,0,0,0.1);
+  --border-act:  rgba(0,0,0,0.35);
+
+  /* Override gradient to black/charcoal */
+  --grad-start:  #111111;
+  --grad-mid:    #333333;
+  --grad-end:    #555555;
+  --gradient:    linear-gradient(90deg, #111111, #333333, #555555);
+
+  /* Day header tints — clean light grays */
+  --day-mon:     #efefef;
+  --day-tue:     #efefef;
+  --day-wed:     #efefef;
+  --day-thu:     #efefef;
+  --day-fri:     #efefef;
+  --day-sat:     #efefef;
+  --day-sun:     #efefef;
+}
+
+/* Light mode progress bar = black */
+[data-theme='light'] .prog-fill {
+  background: #111111;
+}
+
+/* Light mode checkbox = black */
+[data-theme='light'] .habit-checkbox:checked {
+  background: #111111;
+  border-color: #111111;
+  box-shadow: none;
+}
+[data-theme='light'] .habit-checkbox:hover:not(:checked) {
+  border-color: #333333;
+  box-shadow: none;
+}
+[data-theme='light'] .habit-checkbox:checked::after {
+  color: #ffffff;
+}
+
 
 /* ── Reset ── */
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
@@ -70,7 +126,7 @@ html, body {
   font-weight: 800;
   font-size: 1.55rem;
   letter-spacing: 0.04em;
-  color: #ffffff;
+  color: var(--text);
 }
 .logo-tracker {
   font-family: var(--font);
@@ -97,7 +153,7 @@ html, body {
   -webkit-appearance: none;
   width: 15px;
   height: 15px;
-  border: 1.5px solid #2e2e50;
+  border: 1.5px solid var(--border-act);
   border-radius: 4px;
   background: transparent;
   cursor: pointer;
