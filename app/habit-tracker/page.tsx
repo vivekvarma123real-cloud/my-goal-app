@@ -65,6 +65,12 @@ function getWeeksInMonth(year: number, monthIdx: number): Date[][] {
   return weeks;
 }
 
+function getWeekIndexForDate(weeks: Date[][], target: Date): number {
+  const targetDateKey = dateKey(target);
+  const idx = weeks.findIndex((week) => week.some((d) => dateKey(d) === targetDateKey));
+  return idx >= 0 ? idx : 0;
+}
+
 const getCatIconKey = (id: string) => {
   if (id.includes("rich"))        return "rich";
   if (id.includes("muscular"))    return "muscular";
@@ -150,8 +156,8 @@ function CategoryBlock({ category, onToggleHabit, onToggleCollapse, onDeleteHabi
             <span style={{ fontFamily:"var(--font)",fontSize:"0.6rem",fontWeight:700,letterSpacing:"0.04em",textTransform:"uppercase",color:"var(--text-sub)",flex:1,minWidth:0,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap" }}>{category.name}</span>
             <span style={{ fontSize:"0.5rem",flexShrink:0,transition:"transform 0.22s",transform:category.collapsed?"rotate(-90deg)":"rotate(0deg)",background:"var(--gradient)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent" }}>▼</span>
           </button>
-          <span style={{ fontFamily:"var(--font)",fontSize:"0.6rem",fontWeight:600,color:catPct===100?"#28D7FF":"var(--text-sub)",minWidth:26,textAlign:"right" }}>{catPct}%</span>
-          <button onClick={()=>onCheckAll(category.id)} style={{ background:allDone?"rgba(40,215,255,0.12)":"var(--bg-subtle)",border:`1px solid ${allDone?"rgba(40,215,255,0.35)":"var(--bg-hover)"}`,borderRadius:5,padding:"2px 7px",cursor:"pointer",fontFamily:"var(--font)",fontSize:"0.58rem",fontWeight:600,color:allDone?"#28D7FF":"var(--text-sub)",transition:"all 0.18s",whiteSpace:"nowrap" }}>{allDone?"✓ All":"All"}</button>
+          <span style={{ fontFamily:"var(--font)",fontSize:"0.6rem",fontWeight:600,color:catPct===100?"var(--grad-start)":"var(--text-sub)",minWidth:26,textAlign:"right" }}>{catPct}%</span>
+          <button onClick={()=>onCheckAll(category.id)} style={{ background:allDone?"rgba(195,107,255,0.14)":"var(--bg-subtle)",border:`1px solid ${allDone?"rgba(195,107,255,0.35)":"var(--bg-hover)"}`,borderRadius:5,padding:"2px 7px",cursor:"pointer",fontFamily:"var(--font)",fontSize:"0.58rem",fontWeight:600,color:allDone?"var(--grad-start)":"var(--text-sub)",transition:"all 0.18s",whiteSpace:"nowrap" }}>{allDone?"✓ All":"All"}</button>
           <button onClick={()=>{setEditing(true);setEditName(category.name);setEditIcon(category.icon);}} style={{ background:"none",border:"none",cursor:"pointer",padding:"4px",color:"var(--text-sub)",transition:"color 0.15s" }}
             onMouseEnter={e=>(e.currentTarget as HTMLElement).style.color="var(--text)"}
             onMouseLeave={e=>(e.currentTarget as HTMLElement).style.color="var(--text-sub)"}
@@ -419,9 +425,12 @@ function DonutChart({ percent,theme }: { percent:number;theme:"dark"|"light" }) 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 export default function HabitTrackerPage() {
   const now = new Date();
-  const [selYear,  setSelYear]  = useState(now.getFullYear()<2026?2026:now.getFullYear());
-  const [selMonth, setSelMonth] = useState(now.getMonth());
-  const [selWeek,  setSelWeek]  = useState(0);
+  const initialYear = now.getFullYear() < 2026 ? 2026 : now.getFullYear();
+  const initialMonth = now.getMonth();
+  const initialWeek = getWeekIndexForDate(getWeeksInMonth(initialYear, initialMonth), now);
+  const [selYear,  setSelYear]  = useState(initialYear);
+  const [selMonth, setSelMonth] = useState(initialMonth);
+  const [selWeek,  setSelWeek]  = useState(initialWeek);
   const [store,    setStore]    = useState<Record<string,{categories:Category[]}>>({});
   const [theme,    setTheme]    = useState<"dark"|"light">("dark");
   const [userId,   setUserId]   = useState<string|null>(null);
