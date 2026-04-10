@@ -156,8 +156,8 @@ function CategoryBlock({ category, onToggleHabit, onToggleCollapse, onDeleteHabi
             <span style={{ fontFamily:"var(--font)",fontSize:"0.6rem",fontWeight:700,letterSpacing:"0.04em",textTransform:"uppercase",color:"var(--text-sub)",flex:1,minWidth:0,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap" }}>{category.name}</span>
             <span style={{ fontSize:"0.5rem",flexShrink:0,transition:"transform 0.22s",transform:category.collapsed?"rotate(-90deg)":"rotate(0deg)",background:"var(--gradient)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent" }}>▼</span>
           </button>
-          <span style={{ fontFamily:"var(--font)",fontSize:"0.6rem",fontWeight:600,color:catPct===100?"var(--grad-start)":"var(--text-sub)",minWidth:26,textAlign:"right" }}>{catPct}%</span>
-          <button onClick={()=>onCheckAll(category.id)} style={{ background:allDone?"rgba(195,107,255,0.14)":"var(--bg-subtle)",border:`1px solid ${allDone?"rgba(195,107,255,0.35)":"var(--bg-hover)"}`,borderRadius:5,padding:"2px 7px",cursor:"pointer",fontFamily:"var(--font)",fontSize:"0.58rem",fontWeight:600,color:allDone?"var(--grad-start)":"var(--text-sub)",transition:"all 0.18s",whiteSpace:"nowrap" }}>{allDone?"✓ All":"All"}</button>
+          <span style={{ fontFamily:"var(--font)",fontSize:"0.6rem",fontWeight:600,color:catPct===100?"var(--text)":"var(--text-sub)",minWidth:26,textAlign:"right" }}>{catPct}%</span>
+          <button onClick={()=>onCheckAll(category.id)} style={{ background:allDone?"var(--bg-hover)":"var(--bg-subtle)",border:`1px solid ${allDone?"var(--border-act)":"var(--bg-hover)"}`,borderRadius:5,padding:"2px 7px",cursor:"pointer",fontFamily:"var(--font)",fontSize:"0.58rem",fontWeight:600,color:allDone?"var(--text)":"var(--text-sub)",transition:"all 0.18s",whiteSpace:"nowrap" }}>{allDone?"✓ All":"All"}</button>
           <button onClick={()=>{setEditing(true);setEditName(category.name);setEditIcon(category.icon);}} style={{ background:"none",border:"none",cursor:"pointer",padding:"4px",color:"var(--text-sub)",transition:"color 0.15s" }}
             onMouseEnter={e=>(e.currentTarget as HTMLElement).style.color="var(--text)"}
             onMouseLeave={e=>(e.currentTarget as HTMLElement).style.color="var(--text-sub)"}
@@ -165,9 +165,9 @@ function CategoryBlock({ category, onToggleHabit, onToggleCollapse, onDeleteHabi
           >
             <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
           </button>
-          <button onClick={()=>{if(window.confirm(`Delete "${category.name}"?`))onDeleteCat(category.id);}} style={{ background:"none",border:"none",cursor:"pointer",padding:"4px",color:"rgba(195,107,255,0.4)",transition:"color 0.15s" }}
-            onMouseEnter={e=>(e.currentTarget as HTMLElement).style.color="#C36BFF"}
-            onMouseLeave={e=>(e.currentTarget as HTMLElement).style.color="rgba(195,107,255,0.4)"}
+          <button onClick={()=>{if(window.confirm(`Delete "${category.name}"?`))onDeleteCat(category.id);}} style={{ background:"none",border:"none",cursor:"pointer",padding:"4px",color:"var(--text-sub)",transition:"color 0.15s" }}
+            onMouseEnter={e=>(e.currentTarget as HTMLElement).style.color="#ff6b6b"}
+            onMouseLeave={e=>(e.currentTarget as HTMLElement).style.color="var(--text-sub)"}
             title="Delete category"
           >
             <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
@@ -176,9 +176,9 @@ function CategoryBlock({ category, onToggleHabit, onToggleCollapse, onDeleteHabi
       )}
       <div className={`cat-items${category.collapsed?" closed":""}`} style={{ maxHeight:category.collapsed?"0px":"600px",padding:category.collapsed?"0":"0 8px 8px" }}>
         {category.habits.map(h=>(
-          <div key={h.id} style={{ display:"flex",alignItems:"center",gap:7,padding:"4px 6px",borderRadius:6,marginBottom:2,background:h.done?"rgba(195,107,255,0.07)":"transparent",transition:"background 0.15s" }}
+          <div key={h.id} style={{ display:"flex",alignItems:"center",gap:7,padding:"4px 6px",borderRadius:6,marginBottom:2,background:h.done?"var(--bg-subtle)":"transparent",transition:"background 0.15s" }}
             onMouseEnter={e=>{if(!h.done)(e.currentTarget as HTMLElement).style.background="var(--bg-subtle)";}}
-            onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background=h.done?"rgba(195,107,255,0.07)":"transparent";}}
+            onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background=h.done?"var(--bg-subtle)":"transparent";}}
           >
             <input type="checkbox" className="habit-checkbox" checked={h.done} onChange={()=>onToggleHabit(h.id)}/>
             <span style={{ fontFamily:"var(--font)",fontSize:"0.8rem",fontWeight:h.done?400:500,color:h.done?"var(--text-muted)":"var(--text)",textDecoration:h.done?"line-through":"none",flex:1,transition:"all 0.18s" }}>{h.label}</span>
