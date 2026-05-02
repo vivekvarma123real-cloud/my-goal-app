@@ -214,20 +214,21 @@ export default function ChoosePage() {
           </div>
         </div>
 
-        {/* Exam Planner */}
+        {/* Exam & Job Planner */}
         <div onMouseEnter={()=>setHoverExam(true)} onMouseLeave={()=>setHoverExam(false)}
           onClick={() => {
-            if (!isProduction) window.location.href = "/exam-planner";
+            localStorage.removeItem("lifestack-planner-mode");
+            window.location.href = "/exam-planner";
           }}
           style={{
             background:hoverExam?"rgba(195,107,255,0.08)":"rgba(255,255,255,0.03)",
             border:`2px solid ${hoverExam?"rgba(195,107,255,0.5)":"rgba(255,255,255,0.07)"}`,
-            borderRadius:20,padding:"36px 28px",cursor:isProduction?"not-allowed":"pointer",textAlign:"center",
+            borderRadius:20,padding:"36px 28px",cursor:"pointer",textAlign:"center",
             transform:hoverExam?"translateY(-8px) scale(1.02)":"translateY(0) scale(1)",
             transition:"all 0.3s ease",
             boxShadow:hoverExam?"0 24px 60px rgba(195,107,255,0.18)":"none",
             animation:"fadeUp 0.6s ease 0.5s both",position:"relative",overflow:"hidden",
-            opacity:isProduction?0.7:1,
+            opacity:1,
           }}>
           <div style={{position:"absolute",top:-60,right:-60,width:180,height:180,borderRadius:"50%",background:"radial-gradient(circle,rgba(195,107,255,0.12),transparent)",pointerEvents:"none"}}/>
           <div style={{
@@ -241,17 +242,17 @@ export default function ChoosePage() {
               <path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>
             </svg>
           </div>
-          <h2 style={{fontFamily:"'Poppins',sans-serif",fontWeight:800,fontSize:"1.3rem",color:"#fff",margin:"0 0 10px"}}>Exam Planner</h2>
+          <h2 style={{fontFamily:"'Poppins',sans-serif",fontWeight:800,fontSize:"1.3rem",color:"#fff",margin:"0 0 10px"}}>Exam & Job Planner</h2>
           <p style={{fontFamily:"'Poppins',sans-serif",fontSize:"0.82rem",color:"rgba(255,255,255,0.4)",margin:"0 0 22px",lineHeight:1.65}}>
-            Competitive exam command center. Track subjects, chapters, DPPs, test scores and daily study hours.
+            Your career command center. Track competitive exams, skills, projects, interviews, and daily study hours.
           </p>
           <div style={{display:"flex",flexWrap:"wrap",justifyContent:"center",gap:6,marginBottom:22}}>
-            {["GATE / JEE / UPSC","Chapter Tracker","Test Scores","Daily Log"].map(t=>(
+            {["GATE / JEE / UPSC","Tech Interviews","Project Portfolio","Test Scores"].map(t=>(
               <span key={t} style={{fontFamily:"'Poppins',sans-serif",fontSize:"0.62rem",fontWeight:600,color:"#C36BFF",background:"rgba(195,107,255,0.1)",border:"1px solid rgba(195,107,255,0.25)",borderRadius:100,padding:"3px 10px"}}>{t}</span>
             ))}
           </div>
           <div style={{display:"inline-flex",alignItems:"center",gap:6,fontFamily:"'Poppins',sans-serif",fontSize:"0.82rem",fontWeight:700,color:hoverExam?"#C36BFF":"rgba(255,255,255,0.25)",transition:"color 0.3s"}}>
-            {isProduction ? "Coming Soon" : "Open Planner"}
+            Open Planner
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{transform:hoverExam?"translateX(4px)":"translateX(0)",transition:"transform 0.3s"}}><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </div>
         </div>

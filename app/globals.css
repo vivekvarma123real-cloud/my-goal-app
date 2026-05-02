@@ -4,83 +4,86 @@
 
 /* ── Design tokens ─────────────────────────────────────────────────────────── */
 :root {
+  color-scheme: dark;
+
   /* Font — Poppins everywhere, always */
   --font: 'Poppins', sans-serif;
 
   /* Brand gradient: purple → blue → cyan */
-  --grad-start:  #C36BFF;
-  --grad-mid:    #4A90FF;
-  --grad-end:    #28D7FF;
-  --gradient:    linear-gradient(90deg, #C36BFF, #4A90FF, #28D7FF);
+  --grad-start: #C36BFF;
+  --grad-mid: #4A90FF;
+  --grad-end: #28D7FF;
+  --gradient: linear-gradient(90deg, #C36BFF, #4A90FF, #28D7FF);
 
   /* Backgrounds */
-  --bg:          #08080f;
-  --bg-card:     #0f0f1c;
-  --bg-row:      #141428;
-  --bg-input:    #1a1a30;
-  --bg-subtle:   rgba(255,255,255,0.04);
-  --bg-hover:    rgba(255,255,255,0.08);
+  --bg: #08080f;
+  --bg-card: #0f0f1c;
+  --bg-row: #141428;
+  --bg-input: #1a1a30;
+  --bg-subtle: rgba(255, 255, 255, 0.04);
+  --bg-hover: rgba(255, 255, 255, 0.08);
 
   /* Text */
-  --text:        #ffffff;
-  --text-sub:    #a0a0c0;
-  --text-muted:  #50506a;
+  --text: #ffffff;
+  --text-sub: #a0a0c0;
+  --text-muted: #50506a;
 
   /* Borders */
-  --border:      rgba(255,255,255,0.07);
-  --border-act:  rgba(195,107,255,0.4);
+  --border: rgba(255, 255, 255, 0.07);
+  --border-act: rgba(195, 107, 255, 0.4);
 
   /* Day header tints — all in purple/blue/cyan family */
-  --day-mon:     #1e1040;   
-  --day-tue:     #0e1a40;   
-  --day-wed:     #0a1e3a;   
-  --day-thu:     #0d2040;   
-  --day-fri:     #1a0e40;   
-  --day-sat:     #22083a;   
-  --day-sun:     #180840;   
+  --day-mon: #1e1040;
+  --day-tue: #0e1a40;
+  --day-wed: #0a1e3a;
+  --day-thu: #0d2040;
+  --day-fri: #1a0e40;
+  --day-sat: #22083a;
+  --day-sun: #180840;
 
   /* Accent dots — from the gradient */
-  --dot-mon:     #C36BFF;
-  --dot-tue:     #9e7dff;
-  --dot-wed:     #4A90FF;
-  --dot-thu:     #4A90FF;
-  --dot-fri:     #C36BFF;
-  --dot-sat:     #28D7FF;
-  --dot-sun:     #9e7dff;
+  --dot-mon: #C36BFF;
+  --dot-tue: #9e7dff;
+  --dot-wed: #4A90FF;
+  --dot-thu: #4A90FF;
+  --dot-fri: #C36BFF;
+  --dot-sat: #28D7FF;
+  --dot-sun: #9e7dff;
 }
 
 [data-theme='light'] {
+  color-scheme: light;
   /* Backgrounds */
-  --bg:          #f5f5f5;
-  --bg-card:     #ffffff;
-  --bg-row:      #f0f0f0;
-  --bg-input:    #ffffff;
-  --bg-subtle:   rgba(0,0,0,0.04);
-  --bg-hover:    rgba(0,0,0,0.08);
+  --bg: #f5f5f5;
+  --bg-card: #ffffff;
+  --bg-row: #f0f0f0;
+  --bg-input: #ffffff;
+  --bg-subtle: rgba(0, 0, 0, 0.04);
+  --bg-hover: rgba(0, 0, 0, 0.08);
 
   /* Text */
-  --text:        #111111;
-  --text-sub:    #444444;
-  --text-muted:  #888888;
+  --text: #111111;
+  --text-sub: #444444;
+  --text-muted: #888888;
 
   /* Borders */
-  --border:      rgba(0,0,0,0.1);
-  --border-act:  rgba(0,0,0,0.35);
+  --border: rgba(0, 0, 0, 0.1);
+  --border-act: rgba(0, 0, 0, 0.35);
 
   /* Override gradient to black/charcoal */
-  --grad-start:  #111111;
-  --grad-mid:    #333333;
-  --grad-end:    #555555;
-  --gradient:    linear-gradient(90deg, #111111, #333333, #555555);
+  --grad-start: #111111;
+  --grad-mid: #333333;
+  --grad-end: #555555;
+  --gradient: linear-gradient(90deg, #111111, #333333, #555555);
 
   /* Day header tints — clean light grays */
-  --day-mon:     #efefef;
-  --day-tue:     #efefef;
-  --day-wed:     #efefef;
-  --day-thu:     #efefef;
-  --day-fri:     #efefef;
-  --day-sat:     #efefef;
-  --day-sun:     #efefef;
+  --day-mon: #efefef;
+  --day-tue: #efefef;
+  --day-wed: #efefef;
+  --day-thu: #efefef;
+  --day-fri: #efefef;
+  --day-sat: #efefef;
+  --day-sun: #efefef;
 }
 
 /* Light mode progress bar = black */
@@ -94,19 +97,28 @@
   border-color: #111111;
   box-shadow: none;
 }
+
 [data-theme='light'] .habit-checkbox:hover:not(:checked) {
   border-color: #333333;
   box-shadow: none;
 }
+
 [data-theme='light'] .habit-checkbox:checked::after {
   color: #ffffff;
 }
 
 
 /* ── Reset ── */
-*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-html, body {
+html,
+body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--font);
@@ -116,9 +128,19 @@ html, body {
 }
 
 /* ── Scrollbar ── */
-::-webkit-scrollbar { width:3px; height:3px; }
-::-webkit-scrollbar-track { background:transparent; }
-::-webkit-scrollbar-thumb { background:var(--grad-start); border-radius:2px; }
+::-webkit-scrollbar {
+  width: 3px;
+  height: 3px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--grad-start);
+  border-radius: 2px;
+}
 
 /* ── Logo ── */
 .logo-habit {
@@ -128,6 +150,7 @@ html, body {
   letter-spacing: 0.04em;
   color: var(--text);
 }
+
 .logo-tracker {
   font-family: var(--font);
   font-weight: 800;
@@ -138,6 +161,7 @@ html, body {
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
+
 .logo-sub {
   font-family: var(--font);
   font-size: 0.6rem;
@@ -161,24 +185,28 @@ html, body {
   flex-shrink: 0;
   transition: all 0.18s;
 }
+
 .habit-checkbox:checked {
   background: linear-gradient(135deg, #C36BFF, #4A90FF);
   border-color: #C36BFF;
-  box-shadow: 0 0 10px rgba(195,107,255,0.5), 0 0 4px rgba(74,144,255,0.3);
+  box-shadow: 0 0 10px rgba(195, 107, 255, 0.5), 0 0 4px rgba(74, 144, 255, 0.3);
 }
+
 .habit-checkbox:checked::after {
   content: '✓';
   position: absolute;
-  top:50%; left:50%;
-  transform: translate(-50%,-50%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   color: #ffffff;
   font-size: 10px;
   font-weight: 800;
   text-shadow: none;
 }
+
 .habit-checkbox:hover:not(:checked) {
   border-color: #C36BFF;
-  box-shadow: 0 0 6px rgba(195,107,255,0.25);
+  box-shadow: 0 0 6px rgba(195, 107, 255, 0.25);
 }
 
 /* ── Progress bar ── */
@@ -193,21 +221,57 @@ html, body {
   overflow: hidden;
   transition: max-height 0.28s ease, opacity 0.22s ease;
 }
-.cat-items.closed { max-height:0 !important; opacity:0; }
+
+.cat-items.closed {
+  max-height: 0 !important;
+  opacity: 0;
+}
 
 /* ── Card entrance ── */
-.day-card { animation: fadeUp 0.38s ease forwards; opacity:0; }
-@keyframes fadeUp {
-  from { opacity:0; transform:translateY(10px); }
-  to   { opacity:1; transform:translateY(0); }
+.day-card {
+  animation: fadeUp 0.38s ease forwards;
+  opacity: 0;
 }
-.day-card:nth-child(1){animation-delay:0.04s}
-.day-card:nth-child(2){animation-delay:0.08s}
-.day-card:nth-child(3){animation-delay:0.12s}
-.day-card:nth-child(4){animation-delay:0.16s}
-.day-card:nth-child(5){animation-delay:0.20s}
-.day-card:nth-child(6){animation-delay:0.24s}
-.day-card:nth-child(7){animation-delay:0.28s}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.day-card:nth-child(1) {
+  animation-delay: 0.04s
+}
+
+.day-card:nth-child(2) {
+  animation-delay: 0.08s
+}
+
+.day-card:nth-child(3) {
+  animation-delay: 0.12s
+}
+
+.day-card:nth-child(4) {
+  animation-delay: 0.16s
+}
+
+.day-card:nth-child(5) {
+  animation-delay: 0.20s
+}
+
+.day-card:nth-child(6) {
+  animation-delay: 0.24s
+}
+
+.day-card:nth-child(7) {
+  animation-delay: 0.28s
+}
 
 /* ── Input ── */
 .h-input {
@@ -222,8 +286,15 @@ html, body {
   padding: 5px 10px;
   width: 100%;
 }
-.h-input:focus { border-color: var(--grad-start); box-shadow: 0 0 6px rgba(195,107,255,0.15); }
-.h-input::placeholder { color: var(--text-muted); }
+
+.h-input:focus {
+  border-color: var(--grad-start);
+  box-shadow: 0 0 6px rgba(195, 107, 255, 0.15);
+}
+
+.h-input::placeholder {
+  color: var(--text-muted);
+}
 
 /* ── Gradient button ── */
 .grad-btn {
@@ -238,7 +309,10 @@ html, body {
   padding: 5px 14px;
   transition: opacity 0.18s;
 }
-.grad-btn:hover { opacity: 0.88; }
+
+.grad-btn:hover {
+  opacity: 0.88;
+}
 
 /* ── Ghost button ── */
 .ghost-btn {
@@ -256,10 +330,20 @@ html, body {
   cursor: pointer;
   transition: all 0.18s;
 }
-.ghost-btn:hover { color: var(--grad-start); border-color: var(--border-act); }
+
+.ghost-btn:hover {
+  color: var(--grad-start);
+  border-color: var(--border-act);
+}
 
 /* ── View toggle ── */
-.view-wrap { display:flex; border:1px solid var(--border); border-radius:8px; overflow:hidden; }
+.view-wrap {
+  display: flex;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
 .view-btn {
   padding: 5px 14px;
   font-family: var(--font);
@@ -273,7 +357,11 @@ html, body {
   color: var(--text-muted);
   transition: all 0.2s;
 }
-.view-btn.active { background: var(--gradient); color: #fff; }
+
+.view-btn.active {
+  background: var(--gradient);
+  color: #fff;
+}
 
 /* ── Gradient text utility ── */
 .grad-text {
@@ -287,117 +375,216 @@ html, body {
 
 /* Touch target sizes */
 @media (max-width: 768px) {
-  .habit-checkbox { width:20px; height:20px; border-radius:5px; }
-  .habit-checkbox:checked::after { font-size:13px; }
-  .ghost-btn { padding:10px 0; font-size:0.8rem; }
-  .grad-btn { padding:8px 18px; font-size:0.85rem; }
-  .h-input { font-size:0.85rem; padding:8px 12px; }
-  .logo-habit, .logo-tracker { font-size:1.15rem; }
+  .habit-checkbox {
+    width: 20px;
+    height: 20px;
+    border-radius: 5px;
+  }
+
+  .habit-checkbox:checked::after {
+    font-size: 13px;
+  }
+
+  .ghost-btn {
+    padding: 10px 0;
+    font-size: 0.8rem;
+  }
+
+  .grad-btn {
+    padding: 8px 18px;
+    font-size: 0.85rem;
+  }
+
+  .h-input {
+    font-size: 0.85rem;
+    padding: 8px 12px;
+  }
+
+  .logo-habit,
+  .logo-tracker {
+    font-size: 1.15rem;
+  }
 }
 
 /* Habit Tracker mobile */
 @media (max-width: 768px) {
-  .habit-tracker-header { flex-direction:column !important; gap:10px !important; }
-  .habit-tracker-selectors { flex-wrap:wrap !important; gap:8px !important; }
-  .habit-tracker-analytics { grid-template-columns:1fr !important; }
-  .habit-tracker-grid { grid-template-columns:1fr !important; gap:10px !important; }
-  .habit-tracker-analytics-divider { display:none !important; }
+  .habit-tracker-header {
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+
+  .habit-tracker-selectors {
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+
+  .habit-tracker-analytics {
+    grid-template-columns: 1fr !important;
+  }
+
+  .habit-tracker-grid {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+
+  .habit-tracker-analytics-divider {
+    display: none !important;
+  }
 }
 
 /* Goal Planner mobile */
 @media (max-width: 768px) {
-  .goal-planner-layout { flex-direction:column !important; }
-  .goal-planner-sidebar { width:100% !important; min-height:auto !important; position:relative !important; top:auto !important; max-height:none !important; }
-  .goal-planner-main { height:auto !important; overflow:visible !important; }
-  .goal-planner-header-stats { display:none !important; }
+  .goal-planner-layout {
+    flex-direction: column !important;
+  }
+
+  .goal-planner-sidebar {
+    width: 100% !important;
+    min-height: auto !important;
+    position: relative !important;
+    top: auto !important;
+    max-height: none !important;
+  }
+
+  .goal-planner-main {
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  .goal-planner-header-stats {
+    display: none !important;
+  }
 }
 
 /* ── Touch & mobile improvements ─────────────────────────────────────────── */
-button, input, select, textarea {
+button,
+input,
+select,
+textarea {
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
 }
 
 /* Larger touch targets on mobile */
 @media (max-width: 768px) {
-  button { min-height: 36px; }
-  .habit-checkbox { width:22px !important; height:22px !important; }
+  button {
+    min-height: 36px;
+  }
+
+  .habit-checkbox {
+    width: 22px !important;
+    height: 22px !important;
+  }
 
   /* Habit tracker - single column day cards */
-  .habit-tracker-grid { grid-template-columns:1fr !important; }
-  
+  .habit-tracker-grid {
+    grid-template-columns: 1fr !important;
+  }
+
   /* Analytics - stack vertically */
   .habit-tracker-analytics {
-    grid-template-columns:1fr !important;
-    gap:16px !important;
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
   }
-  .habit-tracker-analytics-divider { display:none !important; }
+
+  .habit-tracker-analytics-divider {
+    display: none !important;
+  }
 
   /* Goal planner - no sidebar, just scroll */
   .goal-planner-layout {
-    flex-direction:column !important;
-    height:auto !important;
-    overflow:visible !important;
+    flex-direction: column !important;
+    height: auto !important;
+    overflow: visible !important;
   }
+
   .goal-planner-sidebar {
-    width:100% !important;
-    min-height:auto !important;
-    position:relative !important;
-    top:auto !important;
-    max-height:none !important;
-    border-right:none !important;
-    border-bottom:1px solid #141414 !important;
+    width: 100% !important;
+    min-height: auto !important;
+    position: relative !important;
+    top: auto !important;
+    max-height: none !important;
+    border-right: none !important;
+    border-bottom: 1px solid #141414 !important;
   }
+
   .goal-planner-main {
-    height:auto !important;
-    overflow:visible !important;
+    height: auto !important;
+    overflow: visible !important;
   }
-  .goal-planner-header-stats { display:none !important; }
+
+  .goal-planner-header-stats {
+    display: none !important;
+  }
 
   /* Habit tracker header stack */
   .habit-tracker-header {
-    flex-direction:column !important;
-    align-items:flex-start !important;
-    gap:8px !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 8px !important;
   }
 
   /* Landing nav - hide text links */
-  .nav-links { display:none !important; }
+  .nav-links {
+    display: none !important;
+  }
 
   /* Typography scale down */
-  .logo-habit, .logo-tracker { font-size:1.1rem !important; }
+  .logo-habit,
+  .logo-tracker {
+    font-size: 1.1rem !important;
+  }
 }
 
 /* Prevent horizontal scroll */
-html, body { max-width:100vw; overflow-x:hidden; }
-img, video { max-width:100%; }
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+img,
+video {
+  max-width: 100%;
+}
 
 /* ── Habit Tracker Analytics Mobile Fix ──────────────────────────────────── */
 @media (max-width: 768px) {
-  .analytics-line-chart { display:none !important; }
-  .analytics-bar-chart  { display:none !important; }
-  .analytics-divider    { display:none !important; }
-  .analytics-donut      {
-    width:100% !important;
-    padding:16px 0 !important;
-    display:flex !important;
-    flex-direction:column !important;
-    align-items:center !important;
-    justify-content:center !important;
+  .analytics-line-chart {
+    display: none !important;
   }
+
+  .analytics-bar-chart {
+    display: none !important;
+  }
+
+  .analytics-divider {
+    display: none !important;
+  }
+
+  .analytics-donut {
+    width: 100% !important;
+    padding: 16px 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
   /* Day cards left aligned */
   .habit-tracker-grid {
     justify-items: start !important;
   }
+
   .habit-tracker-analytics {
-    grid-template-columns:1fr !important;
+    grid-template-columns: 1fr !important;
   }
 
   /* Bigger checkbox on mobile */
   .habit-checkbox {
-    width:22px !important;
-    height:22px !important;
-    min-width:22px !important;
+    width: 22px !important;
+    height: 22px !important;
+    min-width: 22px !important;
   }
 }
 
@@ -405,6 +592,7 @@ img, video { max-width:100%; }
 
 /* ── Goal Planner Mobile ─────────────────────────────────────────────────── */
 @media (max-width: 768px) {
+
   /* Full layout becomes vertical scroll */
   .goal-planner-layout {
     flex-direction: column !important;
@@ -412,6 +600,7 @@ img, video { max-width:100%; }
     overflow: visible !important;
     min-height: 100vh;
   }
+
   /* Sidebar becomes compact horizontal strip */
   .goal-planner-sidebar {
     width: 100% !important;
@@ -423,25 +612,35 @@ img, video { max-width:100%; }
     border-bottom: 1px solid #1a1a1a !important;
     padding: 12px !important;
   }
+
   /* Hide radar chart on mobile - takes too much space */
-  .goal-planner-sidebar > div:nth-child(2) { display: none !important; }
+  .goal-planner-sidebar>div:nth-child(2) {
+    display: none !important;
+  }
+
   /* Main scroll area */
   .goal-planner-main {
     height: auto !important;
     overflow: visible !important;
     padding: 12px 10px 80px !important;
   }
+
   /* Goal cards full width */
-  .goal-planner-main > div > div {
+  .goal-planner-main>div>div {
     grid-template-columns: 1fr !important;
   }
+
   /* Drawer full width on mobile */
   .goal-planner-drawer {
     width: 100vw !important;
     left: 0 !important;
   }
+
   /* Header compact */
-  .goal-planner-header-stats { display: none !important; }
+  .goal-planner-header-stats {
+    display: none !important;
+  }
+
   /* Add goal button always visible */
   .goal-planner-add-btn {
     position: fixed !important;
@@ -455,7 +654,9 @@ img, video { max-width:100%; }
 
 /* Show mobile add button only on mobile */
 @media (max-width: 768px) {
-  .goal-planner-add-btn { display: block !important; }
+  .goal-planner-add-btn {
+    display: block !important;
+  }
 }
 
 /* ── Landing page systems cards mobile ──────────────────────────────────── */
@@ -464,6 +665,7 @@ img, video { max-width:100%; }
     padding: 16px !important;
     text-align: left !important;
   }
+
   .sys-card .sys-icon {
     width: 40px !important;
     height: 40px !important;
@@ -471,31 +673,84 @@ img, video { max-width:100%; }
     margin: 0 !important;
     flex-shrink: 0;
   }
+
   .sys-card .sys-body {
     display: flex !important;
     align-items: center !important;
     gap: 12px !important;
     margin-bottom: 8px !important;
   }
-  .sys-card .sys-desc { display: none !important; }
-  .sys-card .sys-tags { display: none !important; }
-  .sys-card .sys-cta { display: none !important; }
+
+  .sys-card .sys-desc {
+    display: none !important;
+  }
+
+  .sys-card .sys-tags {
+    display: none !important;
+  }
+
+  .sys-card .sys-cta {
+    display: none !important;
+  }
 }
 
 /* Systems cards - hide verbose content on small mobile */
 @media (max-width: 480px) {
-  .sys-card { padding: 18px 16px !important; }
-  .sys-card p { display: none !important; }
-  .sys-card > div > div:nth-child(3) { display: none !important; }
+  .sys-card {
+    padding: 18px 16px !important;
+  }
+
+  .sys-card p {
+    display: none !important;
+  }
+
+  .sys-card>div>div:nth-child(3) {
+    display: none !important;
+  }
 }
 
 /* Fix - show analytics charts on mobile too */
 @media (max-width: 768px) {
-  .analytics-line-chart { display:block !important; }
-  .analytics-bar-chart  { display:block !important; }
-  .analytics-divider    { display:none !important; }
+  .analytics-line-chart {
+    display: block !important;
+  }
+
+  .analytics-bar-chart {
+    display: block !important;
+  }
+
+  .analytics-divider {
+    display: none !important;
+  }
+
   .habit-tracker-analytics {
     grid-template-columns: 1fr !important;
     gap: 16px !important;
   }
+}
+
+/* ── Exam Planner Scoped Theme (Midnight Neon Focus) ── */
+.exam-planner-theme {
+  /* Brand gradient: indigo → pink → cyan */
+  --grad-start:  #6366F1;
+  --grad-mid:    #F472B6;
+  --grad-end:    #22D3EE;
+  --gradient:    linear-gradient(90deg, #6366F1, #F472B6, #22D3EE);
+
+  /* Backgrounds */
+  --bg:          #060A17;
+  --bg-card:     #0A0F24;
+  --bg-row:      #10172D;
+  --bg-input:    #141D3B;
+  --bg-subtle:   rgba(255,255,255,0.03);
+  --bg-hover:    rgba(255,255,255,0.06);
+
+  /* Text */
+  --text:        #E2E8F0;
+  --text-sub:    #CBD5E1;
+  --text-muted:  #94A3B8;
+
+  /* Borders */
+  --border:      rgba(255,255,255,0.08);
+  --border-act:  #6366F1;
 }
