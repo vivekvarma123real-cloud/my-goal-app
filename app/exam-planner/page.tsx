@@ -11,7 +11,8 @@ const PLANNER_MODE_KEY = "lifestack-planner-mode";
 // ─── Types ────────────────────────────────────────────────────────────────────
 const uid = () => Math.random().toString(36).substr(2, 9);
 const STORAGE_KEY = "lifestack-exam";
-const today = () => new Date().toISOString().split("T")[0];
+export const localDateString = (d: Date = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+const today = () => localDateString();
 
 type Chapter = { id: string; name: string; done: boolean; dpps?: number; lec?: boolean; notes?: boolean; shortnotes?: boolean; pyqs?: boolean; test?: boolean; rev?: number; };
 type Subject = {
@@ -64,7 +65,7 @@ function daysLeft(dateStr: string) {
   return Math.max(0, Math.ceil(diff / 86400000));
 }
 
-function dateKey(d: Date) { return d.toISOString().split("T")[0]; }
+function dateKey(d: Date) { return localDateString(d); }
 
 function getWeekDates() {
   const now = new Date();
@@ -128,11 +129,11 @@ function WeeklyBarChart({ logs, dates }: { logs: DailyLog[]; dates: Date[] }) {
     return { label: DAYS_SHORT[d.getDay() === 0 ? 6 : d.getDay() - 1], hours: logs.find(l => l.date === ds)?.hours || 0 };
   });
   const maxH = Math.max(...data.map(d => d.hours), 1);
-  const W = 420, H = 150, PB = 36, PT = 10, PL = 28, PR = 8;
+  const W = 420, H = 150, PB = 36, PT = 24, PL = 28, PR = 8;
   const gH = H - PB - PT, gW = W - PL - PR;
   const n = data.length, slotW = gW / n, barW = Math.min(slotW * 0.55, 38);
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", height: "100%" }}>
+    <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", height: "100%", overflow: "visible" }}>
       <defs>
         <linearGradient id="wbg" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#C36BFF" />
@@ -234,7 +235,7 @@ function HeatMapChart({ logs }: { logs: DailyLog[] }) {
   for (let i = totalDays - 1; i >= 0; i--) {
     const d = new Date();
     d.setDate(d.getDate() - i);
-    const ds = d.toISOString().split('T')[0];
+    const ds = localDateString(d);
     days.push({ date: ds, hours: logs.find(l => l.date === ds)?.hours || 0 });
   }
   const maxH = Math.max(...days.map(d => d.hours), 1);
@@ -268,7 +269,7 @@ function HeatMapChart({ logs }: { logs: DailyLog[] }) {
           return (
             <rect key={idx} x={x} y={y} width={cellSize} height={cellSize} rx="2"
               fill={colorFor(d.hours)}
-              opacity={d.date === new Date().toISOString().split('T')[0] ? 1 : 0.9}
+              opacity={d.date === localDateString() ? 1 : 0.9}
               style={{ cursor: "pointer", transition: "transform 0.1s" }}
               onMouseEnter={() => setTooltip({ x: x + cellSize / 2, y, text: `${d.date}: ${d.hours.toFixed(1)}h` })}
               onMouseLeave={() => setTooltip(null)}
@@ -959,7 +960,7 @@ function CompetitiveExamPlanner({ onSwitchMode }: { onSwitchMode?: () => void })
   const [showAddWeek, setShowAddWeek] = useState(false);
   const [showAddMonth, setShowAddMonth] = useState(false);
   // Week plan form
-  const [wpWeekStart, setWpWeekStart] = useState(() => { const d = new Date(); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return d.toISOString().split('T')[0]; });
+  const [wpWeekStart, setWpWeekStart] = useState(() => { const d = new Date(); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return localDateString(d); });
   const [wpTargetHours, setWpTargetHours] = useState(0);
   const [wpTargetDpps, setWpTargetDpps] = useState(0);
   const [wpNotes, setWpNotes] = useState("");
