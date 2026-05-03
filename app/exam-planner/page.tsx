@@ -2073,8 +2073,8 @@ function CompetitiveExamPlanner({ onSwitchMode }: { onSwitchMode?: () => void })
 
       {/* ─── ADD WEEK PLAN MODAL ─── */}
       {showAddWeek && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.8)", backdropFilter: "blur(8px)", zIndex: 10000, display: "flex", alignItems: "flex-start", justifyContent: "center", padding: 20, overflowY: "auto" }}>
-          <div style={{ marginTop: "10vh", marginBottom: 40, background: "var(--bg-card)", border: "1px solid var(--border-act)", borderRadius: 16, padding: 28, width: "100%", maxWidth: 560, overflow: "visible" }}>
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.8)", backdropFilter: "blur(8px)", zIndex: 10000, display: "block", padding: "1px 20px", overflowY: "auto" }}>
+          <div style={{ margin: "10vh auto 40px", background: "var(--bg-card)", border: "1px solid var(--border-act)", borderRadius: 16, padding: 28, width: "100%", maxWidth: 560, overflow: "visible" }}>
             <h3 style={{ fontFamily: "var(--font)", fontWeight: 800, color: "var(--text)", marginBottom: 20, display: "flex", alignItems: "center", gap: 8 }}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" /></svg> New Weekly Plan</h3>
             <div className="ep-grid-3" style={{ marginBottom: 16 }}>
               <div style={{ position: "relative", zIndex: 10 }}>
@@ -2136,8 +2136,8 @@ function CompetitiveExamPlanner({ onSwitchMode }: { onSwitchMode?: () => void })
 
       {/* ─── ADD DAILY PLAN MODAL ─── */}
       {showAddDaily && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.8)", backdropFilter: "blur(8px)", zIndex: 10000, display: "flex", alignItems: "flex-start", justifyContent: "center", padding: 20, overflowY: "auto" }}>
-          <div style={{ marginTop: "10vh", marginBottom: 40, background: "var(--bg-card)", border: "1px solid var(--border-act)", borderRadius: 16, padding: 28, width: "100%", maxWidth: 400, overflow: "visible" }}>
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.8)", backdropFilter: "blur(8px)", zIndex: 10000, display: "block", padding: "1px 20px", overflowY: "auto" }}>
+          <div style={{ margin: "10vh auto 40px", background: "var(--bg-card)", border: "1px solid var(--border-act)", borderRadius: 16, padding: 28, width: "100%", maxWidth: 400, overflow: "visible" }}>
             <h3 style={{ fontFamily: "var(--font)", fontWeight: 800, color: "var(--text)", marginBottom: 20, display: "flex", alignItems: "center", gap: 8 }}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" /></svg> New Daily Planner</h3>
             <div style={{ marginBottom: 16, position: "relative", zIndex: 10 }}>
               <label style={{ display: "block", color: "var(--text-muted)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 6 }}>Date</label>
@@ -2165,8 +2165,8 @@ function CompetitiveExamPlanner({ onSwitchMode }: { onSwitchMode?: () => void })
 
       {/* ─── ADD MONTH PLAN MODAL ─── */}
       {showAddMonth && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.8)", backdropFilter: "blur(8px)", zIndex: 10000, display: "flex", alignItems: "flex-start", justifyContent: "center", padding: 20, overflowY: "auto" }}>
-          <div style={{ marginTop: "10vh", marginBottom: 40, background: "var(--bg-card)", border: "1px solid var(--border-act)", borderRadius: 16, padding: 28, width: "100%", maxWidth: 520, overflow: "visible" }}>
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.8)", backdropFilter: "blur(8px)", zIndex: 10000, display: "block", padding: "1px 20px", overflowY: "auto" }}>
+          <div style={{ margin: "10vh auto 40px", background: "var(--bg-card)", border: "1px solid var(--border-act)", borderRadius: 16, padding: 28, width: "100%", maxWidth: 520, overflow: "visible" }}>
             <h3 style={{ fontFamily: "var(--font)", fontWeight: 800, color: "var(--text)", marginBottom: 20, display: "flex", alignItems: "center", gap: 8 }}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01" /></svg> New Monthly Plan</h3>
             <div style={{ marginBottom: 16, position: "relative", zIndex: 10 }}>
               <label style={{ display: "block", color: "var(--text-muted)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 6 }}>Month</label>
