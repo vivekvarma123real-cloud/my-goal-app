@@ -690,19 +690,34 @@ function SubjectCard({ sub, onToggleChapter, onUpdateChapter, onUpdateSubject, o
   const [editing, setEditing] = useState(false);
   const [editName, setEditName] = useState(sub.name);
   const [editDeadline, setEditDeadline] = useState(sub.deadline);
+  const [editChapters, setEditChapters] = useState<Chapter[]>(sub.chapters);
+  const [newChapName, setNewChapName] = useState("");
+  const [editingChapId, setEditingChapId] = useState<string | null>(null);
+  const [editChapText, setEditChapText] = useState("");
   const done = sub.chapters.filter(c => c.done).length;
   const total = sub.chapters.length;
   const pct = total === 0 ? 0 : Math.round((done / total) * 100);
   const dl = daysLeft(sub.deadline);
   const deadlineColor = dl < 7 ? "#ff6b6b" : dl < 21 ? "#ffa94d" : "var(--text-sub)";
   const saveEdit = () => {
-    onUpdateSubject({ name: editName.trim().toUpperCase() || sub.name, deadline: editDeadline });
+    onUpdateSubject({ name: editName.trim().toUpperCase() || sub.name, deadline: editDeadline, chapters: editChapters });
     setEditing(false);
+    setNewChapName("");
+    setEditingChapId(null);
   };
   const cancelEdit = () => {
     setEditName(sub.name);
     setEditDeadline(sub.deadline);
+    setEditChapters(sub.chapters);
     setEditing(false);
+    setNewChapName("");
+    setEditingChapId(null);
+  };
+  const startEditing = () => {
+    setEditName(sub.name);
+    setEditDeadline(sub.deadline);
+    setEditChapters([...sub.chapters]);
+    setEditing(true);
   };
   return (
     <div style={{ background: "var(--bg-card)", border: `1px solid var(--border)`, borderRadius: 12, overflow: "hidden", borderTop: `3px solid ${sub.color}` }}>
@@ -711,9 +726,43 @@ function SubjectCard({ sub, onToggleChapter, onUpdateChapter, onUpdateSubject, o
           <div style={{ width: 10, height: 10, borderRadius: "50%", background: sub.color, boxShadow: `0 0 10px ${sub.color}88`, flexShrink: 0 }} />
           <div style={{ flex: 1, minWidth: 0 }}>
             {editing ? (
-              <div style={{ display: "flex", flexDirection: "column", gap: 8 }} onClick={e => e.stopPropagation()}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8, width: "100%" }} onClick={e => e.stopPropagation()}>
                 <input value={editName} onChange={e => setEditName(e.target.value)} placeholder="Subject name" style={{ width: "100%", padding: "8px 10px", borderRadius: 8, border: "1px solid var(--border)", background: "var(--bg-subtle)", color: "var(--text)", fontFamily: "var(--font)", fontSize: "0.85rem", fontWeight: 700 }} />
                 <CustomDatePicker value={editDeadline} onChange={setEditDeadline} fullWidth allowClear />
+
+                {/* Chapter management in edit mode */}
+                <div style={{ background: "var(--bg-subtle)", border: "1px solid var(--border)", borderRadius: 8, padding: 10 }}>
+                  <div style={{ fontSize: "0.7rem", fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 }}>Chapters ({editChapters.length})</div>
+                  {editChapters.length === 0 && <div style={{ fontSize: "0.78rem", color: "var(--text-muted)", fontStyle: "italic", marginBottom: 8 }}>No chapters yet</div>}
+                  <div style={{ display: "flex", flexDirection: "column", gap: 4, marginBottom: 8 }}>
+                    {editChapters.map(ch => (
+                      <div key={ch.id} style={{ display: "flex", alignItems: "center", gap: 6, padding: "5px 8px", background: "var(--bg-card)", borderRadius: 6, border: "1px solid var(--border)" }}>
+                        {editingChapId === ch.id ? (
+                          <>
+                            <input value={editChapText} onChange={e => setEditChapText(e.target.value)} onKeyDown={e => { if (e.key === 'Enter' && editChapText.trim()) { setEditChapters(prev => prev.map(c => c.id === ch.id ? { ...c, name: editChapText.trim() } : c)); setEditingChapId(null); } }} autoFocus style={{ flex: 1, padding: "4px 6px", borderRadius: 5, border: "1px solid var(--border-act)", background: "var(--bg-subtle)", color: "var(--text)", fontFamily: "var(--font)", fontSize: "0.78rem", outline: "none" }} />
+                            <button type="button" onClick={() => { if (editChapText.trim()) { setEditChapters(prev => prev.map(c => c.id === ch.id ? { ...c, name: editChapText.trim() } : c)); setEditingChapId(null); } }} style={{ background: sub.color, border: "none", borderRadius: 5, color: "#fff", padding: "3px 8px", fontSize: "0.68rem", fontWeight: 700, cursor: "pointer" }}>OK</button>
+                            <button type="button" onClick={() => setEditingChapId(null)} style={{ background: "none", border: "1px solid var(--border)", borderRadius: 5, color: "var(--text-muted)", padding: "3px 8px", fontSize: "0.68rem", fontWeight: 600, cursor: "pointer" }}>✕</button>
+                          </>
+                        ) : (
+                          <>
+                            <span style={{ flex: 1, fontSize: "0.78rem", fontWeight: 500, color: "var(--text)" }}>{ch.name}</span>
+                            <button type="button" onClick={() => { setEditingChapId(ch.id); setEditChapText(ch.name); }} title="Edit" style={{ background: "none", border: "none", color: "var(--text-muted)", cursor: "pointer", padding: 2, display: "flex" }}>
+                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" /></svg>
+                            </button>
+                            <button type="button" onClick={() => setEditChapters(prev => prev.filter(c => c.id !== ch.id))} title="Delete" style={{ background: "none", border: "none", color: "rgba(255,100,100,0.6)", cursor: "pointer", padding: 2, display: "flex" }}>
+                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" /></svg>
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{ display: "flex", gap: 6 }}>
+                    <input value={newChapName} onChange={e => setNewChapName(e.target.value)} placeholder="New chapter name..." onKeyDown={e => { if (e.key === 'Enter' && newChapName.trim()) { setEditChapters(prev => [...prev, { id: uid(), name: newChapName.trim(), done: false, dpps: 0 }]); setNewChapName(""); } }} style={{ flex: 1, padding: "6px 8px", borderRadius: 6, border: "1px solid var(--border)", background: "var(--bg-card)", color: "var(--text)", fontFamily: "var(--font)", fontSize: "0.78rem", outline: "none" }} />
+                    <button type="button" onClick={() => { if (newChapName.trim()) { setEditChapters(prev => [...prev, { id: uid(), name: newChapName.trim(), done: false, dpps: 0 }]); setNewChapName(""); } }} disabled={!newChapName.trim()} style={{ padding: "6px 10px", background: newChapName.trim() ? `linear-gradient(135deg,${sub.color},${sub.color}cc)` : "var(--bg-card)", border: newChapName.trim() ? "none" : "1px solid var(--border)", borderRadius: 6, color: newChapName.trim() ? "#fff" : "var(--text-muted)", fontSize: "0.72rem", fontWeight: 700, cursor: newChapName.trim() ? "pointer" : "default", fontFamily: "var(--font)", whiteSpace: "nowrap" }}>+ Add</button>
+                  </div>
+                </div>
+
                 <div style={{ display: "flex", gap: 8 }}>
                   <button type="button" onClick={saveEdit} style={{ padding: "6px 12px", borderRadius: 7, border: "none", background: `linear-gradient(135deg,${sub.color},${sub.color}cc)`, color: "#fff", fontWeight: 700, fontSize: "0.72rem", cursor: "pointer", fontFamily: "var(--font)" }}>Save</button>
                   <button type="button" onClick={cancelEdit} style={{ padding: "6px 12px", borderRadius: 7, border: "1px solid var(--border)", background: "var(--bg-subtle)", color: "var(--text-muted)", fontWeight: 600, fontSize: "0.72rem", cursor: "pointer", fontFamily: "var(--font)" }}>Cancel</button>
@@ -729,7 +778,7 @@ function SubjectCard({ sub, onToggleChapter, onUpdateChapter, onUpdateSubject, o
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
           {!editing && (
-            <button type="button" title="Edit subject" onClick={e => { e.stopPropagation(); setEditName(sub.name); setEditDeadline(sub.deadline); setEditing(true); }}
+            <button type="button" title="Edit subject" onClick={e => { e.stopPropagation(); startEditing(); }}
               style={{ background: "var(--bg-subtle)", border: "1px solid var(--border)", borderRadius: 8, padding: "6px 8px", cursor: "pointer", color: "var(--text-sub)", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" /></svg>
             </button>
@@ -865,11 +914,13 @@ function AddSubjectModal({ onAdd, onClose }: { onAdd: (s: Subject) => void; onCl
                 </span>
               ))}
               <input value={chapInput} onChange={e => setChapInput(e.target.value)} onKeyDown={handleChapKey}
-                placeholder={chapters.length === 0 ? "Type chapter name → press Enter to add" : "Add another..."}
-                style={{ border: "none", background: "transparent", color: "var(--text)", fontFamily: "var(--font)", fontSize: "0.85rem", outline: "none", flexGrow: 1, minWidth: 140 }} />
+                placeholder={chapters.length === 0 ? "Type chapter name..." : "Add another..."}
+                style={{ border: "none", background: "transparent", color: "var(--text)", fontFamily: "var(--font)", fontSize: "0.85rem", outline: "none", flexGrow: 1, minWidth: 120 }} />
+              <button type="button" onClick={addChap} disabled={!chapInput.trim()}
+                style={{ padding: "5px 12px", background: chapInput.trim() ? `linear-gradient(135deg,${color},#C36BFF)` : "var(--bg-subtle)", border: chapInput.trim() ? "none" : "1px solid var(--border)", borderRadius: 6, color: chapInput.trim() ? "#fff" : "var(--text-muted)", fontFamily: "var(--font)", fontSize: "0.75rem", fontWeight: 700, cursor: chapInput.trim() ? "pointer" : "default", whiteSpace: "nowrap", flexShrink: 0, transition: "all 0.2s" }}>+ Add</button>
             </div>
             <div style={{ marginTop: 5, fontSize: "0.68rem", color: "var(--text-muted)" }}>
-              Press <strong>Enter</strong> or <strong>,</strong> to add each chapter · <strong>Backspace</strong> to remove last
+              Type a chapter name and tap <strong>+ Add</strong> or press <strong>Enter</strong> · <strong>Backspace</strong> to remove last
             </div>
           </div>
 
@@ -1843,20 +1894,34 @@ function CompetitiveExamPlanner({ onSwitchMode }: { onSwitchMode?: () => void })
                               }} style={{ marginLeft: "auto", background: "none", border: "none", color: "rgba(255,100,100,0.5)", cursor: "pointer", fontWeight: 700 }}>×</button>
                             </div>
                           ))}
-                          <input type="text" placeholder="+ Press Enter to add task..." onKeyDown={e => {
-                            if (e.key === 'Enter' && e.currentTarget.value.trim()) {
-                              const val = e.currentTarget.value.trim();
-                              e.currentTarget.value = "";
-                              updateStore(s => ({
-                                ...s, dailyLogs: s.dailyLogs.map(l => l.date === dl.date ? {
-                                  ...l, tasks: [...(l.tasks || []), { id: uid(), text: val, done: false }]
-                                } : l)
-                              }));
-                            }
-                          }} style={{ width: "100%", padding: "8px 12px", marginTop: 6, background: "var(--bg-subtle)", border: "1px solid var(--border)", borderRadius: 8, color: "var(--text)", fontFamily: "var(--font)", fontSize: "0.85rem", outline: "none", transition: "border-color 0.2s" }}
-                            onFocus={e => e.currentTarget.style.borderColor = "var(--border-act)"}
-                            onBlur={e => e.currentTarget.style.borderColor = "var(--border)"}
-                          />
+                          <div style={{ display: "flex", gap: 6, marginTop: 6, alignItems: "center" }}>
+                            <input type="text" id={`task-input-${dl.date}`} placeholder="+ Add task..." onKeyDown={e => {
+                              if (e.key === 'Enter' && e.currentTarget.value.trim()) {
+                                const val = e.currentTarget.value.trim();
+                                e.currentTarget.value = "";
+                                updateStore(s => ({
+                                  ...s, dailyLogs: s.dailyLogs.map(l => l.date === dl.date ? {
+                                    ...l, tasks: [...(l.tasks || []), { id: uid(), text: val, done: false }]
+                                  } : l)
+                                }));
+                              }
+                            }} style={{ flex: 1, padding: "8px 12px", background: "var(--bg-subtle)", border: "1px solid var(--border)", borderRadius: 8, color: "var(--text)", fontFamily: "var(--font)", fontSize: "0.85rem", outline: "none", transition: "border-color 0.2s" }}
+                              onFocus={e => e.currentTarget.style.borderColor = "var(--border-act)"}
+                              onBlur={e => e.currentTarget.style.borderColor = "var(--border)"}
+                            />
+                            <button type="button" onClick={() => {
+                              const inp = document.getElementById(`task-input-${dl.date}`) as HTMLInputElement;
+                              if (inp && inp.value.trim()) {
+                                const val = inp.value.trim();
+                                inp.value = "";
+                                updateStore(s => ({
+                                  ...s, dailyLogs: s.dailyLogs.map(l => l.date === dl.date ? {
+                                    ...l, tasks: [...(l.tasks || []), { id: uid(), text: val, done: false }]
+                                  } : l)
+                                }));
+                              }
+                            }} style={{ padding: "8px 14px", background: "linear-gradient(135deg,#C36BFF,#4A90FF)", border: "none", borderRadius: 8, color: "#fff", fontFamily: "var(--font)", fontSize: "0.8rem", fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap", flexShrink: 0, boxShadow: "0 2px 8px rgba(195,107,255,0.3)", transition: "all 0.2s" }}>Add</button>
+                          </div>
                         </div>
                       </div>
                     );
