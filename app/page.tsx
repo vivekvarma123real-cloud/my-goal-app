@@ -241,14 +241,7 @@ export default function LandingPage() {
               onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.color="rgba(248,113,113,0.6)";(e.currentTarget as HTMLElement).style.borderColor="rgba(248,113,113,0.25)";}}
             >Log Out</button>
           )}
-          {isDevMode && (
-            <button onClick={handleInstallClick} className="btn-ghost" style={{background:"rgba(255,255,255,0.05)",border:"1px solid rgba(195,107,255,0.3)",borderRadius:9,color:"#C36BFF",padding:"9px 18px",cursor:"pointer",fontFamily:"'Poppins',sans-serif",fontSize:"0.82rem",fontWeight:700,transition:"all 0.2s",marginRight:"8px"}}
-              onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background="rgba(195,107,255,0.1)";(e.currentTarget as HTMLElement).style.borderColor="#C36BFF";}}
-              onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background="rgba(255,255,255,0.05)";(e.currentTarget as HTMLElement).style.borderColor="rgba(195,107,255,0.3)";}}
-            >
-              ⬇️ Install App
-            </button>
-          )}
+
           <button onClick={goTo} className="btn-primary" style={{background:"linear-gradient(135deg,#FF6A00,#C36BFF)",border:"none",borderRadius:9,color:"#fff",padding:"9px 26px",cursor:"pointer",fontFamily:"'Poppins',sans-serif",fontSize:"0.82rem",fontWeight:700,letterSpacing:"0.02em",boxShadow:"0 4px 20px rgba(255,106,0,0.3)"}}>Get Started</button>
         </div>
       </nav>
@@ -282,14 +275,7 @@ export default function LandingPage() {
           <button onClick={()=>document.getElementById("systems")?.scrollIntoView({behavior:"smooth"})} className="btn-ghost" style={{background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:14,color:"rgba(255,255,255,0.65)",padding:"17px 36px",cursor:"pointer",fontFamily:"'Poppins',sans-serif",fontSize:"1rem",fontWeight:600,backdropFilter:"blur(10px)",transition:"all 0.3s"}}>
             See How It Works ↓
           </button>
-          {isDevMode && (
-            <button onClick={handleInstallClick} className="btn-ghost" style={{background:"rgba(255,255,255,0.06)",border:"1px solid rgba(195,107,255,0.3)",borderRadius:14,color:"#C36BFF",padding:"17px 36px",cursor:"pointer",fontFamily:"'Poppins',sans-serif",fontSize:"1rem",fontWeight:700,backdropFilter:"blur(10px)",transition:"all 0.3s",boxShadow:"0 8px 24px rgba(195,107,255,0.15)"}}
-              onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background="rgba(195,107,255,0.15)";(e.currentTarget as HTMLElement).style.borderColor="#C36BFF";}}
-              onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background="rgba(255,255,255,0.06)";(e.currentTarget as HTMLElement).style.borderColor="rgba(195,107,255,0.3)";}}
-            >
-              💻 Download PC & Mobile App
-            </button>
-          )}
+
         </div>
 
 
