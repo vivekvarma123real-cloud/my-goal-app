@@ -17,11 +17,63 @@ export default function LandingPage() {
   const [fbSubmitting, setFbSubmitting] = useState(false);
   const [fbSuccess, setFbSuccess] = useState(false);
   const [mouseY, setMouseY] = useState(0);
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [showInstallBtn, setShowInstallBtn] = useState(false);
+  const [isInstallModalOpen, setIsInstallModalOpen] = useState(false);
+  const [deviceType, setDeviceType] = useState<"ios" | "android" | "desktop">("desktop");
+  const [isDevMode, setIsDevMode] = useState(false);
+  const [isStandaloneSplash, setIsStandaloneSplash] = useState(false);
+  const [splashLoading, setSplashLoading] = useState(true);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animRef = useRef<number>(0);
 
-  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
-  const [showInstallBtn, setShowInstallBtn] = useState(false);
+  useEffect(() => {
+    const ua = navigator.userAgent.toLowerCase();
+    if (/iphone|ipad|ipod/.test(ua)) {
+      setDeviceType("ios");
+    } else if (/android/.test(ua)) {
+      setDeviceType("android");
+    } else {
+      setDeviceType("desktop");
+    }
+  }, []);
+
+  useEffect(() => {
+    // Detect standalone / app display mode
+    if (typeof window !== "undefined") {
+      const isStandalone = window.matchMedia("(display-mode: standalone)").matches || 
+                           (window as any).Capacitor !== undefined || 
+                           (navigator as any).standalone === true;
+      
+      if (isStandalone) {
+        setIsStandaloneSplash(true);
+        supabase.auth.getSession().then(({ data: { session } }) => {
+          setTimeout(() => {
+            setSplashLoading(false);
+            router.replace(session ? "/choose" : "/login");
+          }, 1500); // Premium loading duration for smooth splash pulse
+        });
+      }
+    }
+  }, [router]);
+
+  useEffect(() => {
+    // Dev mode check for PWA buttons
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const pwaBetaParam = params.get("pwa") === "true" || params.get("dev") === "true";
+      const pwaBetaLocal = localStorage.getItem("lifestack_pwa_beta") === "true";
+      const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+      
+      if (pwaBetaParam) {
+        localStorage.setItem("lifestack_pwa_beta", "true");
+        setIsDevMode(true);
+      } else if (pwaBetaLocal || isLocal) {
+        setIsDevMode(true);
+      }
+    }
+  }, []);
+
 
   useEffect(() => {
     const handleBeforeInstallPrompt = (e: Event) => {
@@ -44,12 +96,15 @@ export default function LandingPage() {
   }, []);
 
   const handleInstallClick = async () => {
-    if (!deferredPrompt) return;
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    console.log(`PWA install prompt outcome: ${outcome}`);
-    setDeferredPrompt(null);
-    setShowInstallBtn(false);
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      console.log(`PWA install prompt outcome: ${outcome}`);
+      setDeferredPrompt(null);
+      setShowInstallBtn(false);
+    } else {
+      setIsInstallModalOpen(true);
+    }
   };
 
   useEffect(() => {
@@ -168,9 +223,7 @@ export default function LandingPage() {
       {/* ── NAV ── */}
       <nav style={{position:"fixed",top:0,left:0,right:0,zIndex:100,padding:"12px 20px",display:"flex",alignItems:"center",justifyContent:"space-between",background:"rgba(6,6,15,0.88)",backdropFilter:"blur(24px)",borderBottom:"1px solid rgba(255,255,255,0.05)"}}>
         <div style={{display:"flex",alignItems:"center",gap:10}}>
-          <div style={{width:34,height:34,borderRadius:9,background:"linear-gradient(135deg,#FF6A00,#C36BFF)",display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 4px 16px rgba(255,106,0,0.35)",animation:"borderAnim 3s ease infinite"}}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-          </div>
+          <img src="/icons/icon-192.png" alt="LifeStack Logo" style={{width:34,height:34,borderRadius:9,boxShadow:"0 4px 16px rgba(255,106,0,0.35)",animation:"borderAnim 3s ease infinite"}} />
           <span style={{fontFamily:"'Poppins',sans-serif",fontWeight:900,fontSize:"1.1rem",color:"#fff",letterSpacing:"0.02em"}}>LifeStack</span>
         </div>
         <div style={{display:"flex",alignItems:"center",gap:16}}>
@@ -188,8 +241,8 @@ export default function LandingPage() {
               onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.color="rgba(248,113,113,0.6)";(e.currentTarget as HTMLElement).style.borderColor="rgba(248,113,113,0.25)";}}
             >Log Out</button>
           )}
-          {showInstallBtn && (
-            <button onClick={handleInstallClick} className="btn-ghost" style={{background:"rgba(255,255,255,0.05)",border:"1px solid rgba(195,107,255,0.3)",borderRadius:9,color:"#C36BFF",padding:"9px 18px",cursor:"pointer",fontFamily:"'Poppins',sans-serif",fontSize:"0.82rem",fontWeight:700,transition:"all 0.2s"}}
+          {isDevMode && (
+            <button onClick={handleInstallClick} className="btn-ghost" style={{background:"rgba(255,255,255,0.05)",border:"1px solid rgba(195,107,255,0.3)",borderRadius:9,color:"#C36BFF",padding:"9px 18px",cursor:"pointer",fontFamily:"'Poppins',sans-serif",fontSize:"0.82rem",fontWeight:700,transition:"all 0.2s",marginRight:"8px"}}
               onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background="rgba(195,107,255,0.1)";(e.currentTarget as HTMLElement).style.borderColor="#C36BFF";}}
               onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background="rgba(255,255,255,0.05)";(e.currentTarget as HTMLElement).style.borderColor="rgba(195,107,255,0.3)";}}
             >
@@ -229,7 +282,7 @@ export default function LandingPage() {
           <button onClick={()=>document.getElementById("systems")?.scrollIntoView({behavior:"smooth"})} className="btn-ghost" style={{background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:14,color:"rgba(255,255,255,0.65)",padding:"17px 36px",cursor:"pointer",fontFamily:"'Poppins',sans-serif",fontSize:"1rem",fontWeight:600,backdropFilter:"blur(10px)",transition:"all 0.3s"}}>
             See How It Works ↓
           </button>
-          {showInstallBtn && (
+          {isDevMode && (
             <button onClick={handleInstallClick} className="btn-ghost" style={{background:"rgba(255,255,255,0.06)",border:"1px solid rgba(195,107,255,0.3)",borderRadius:14,color:"#C36BFF",padding:"17px 36px",cursor:"pointer",fontFamily:"'Poppins',sans-serif",fontSize:"1rem",fontWeight:700,backdropFilter:"blur(10px)",transition:"all 0.3s",boxShadow:"0 8px 24px rgba(195,107,255,0.15)"}}
               onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background="rgba(195,107,255,0.15)";(e.currentTarget as HTMLElement).style.borderColor="#C36BFF";}}
               onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background="rgba(255,255,255,0.06)";(e.currentTarget as HTMLElement).style.borderColor="rgba(195,107,255,0.3)";}}
@@ -238,6 +291,7 @@ export default function LandingPage() {
             </button>
           )}
         </div>
+
 
         {/* Stats */}
         <div style={{display:"flex",gap:56,justifyContent:"center",flexWrap:"wrap",animation:"fadeUp 1s ease 1s both",opacity:0}}>
@@ -538,13 +592,132 @@ export default function LandingPage() {
       {/* Footer */}
       <footer style={{borderTop:"1px solid rgba(255,255,255,0.05)",padding:"22px 48px",display:"flex",alignItems:"center",justifyContent:"space-between",position:"relative",zIndex:1}}>
         <div style={{display:"flex",alignItems:"center",gap:8}}>
-          <div style={{width:22,height:22,borderRadius:6,background:"linear-gradient(135deg,#FF6A00,#C36BFF)",display:"flex",alignItems:"center",justifyContent:"center"}}>
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-          </div>
+          <img src="/icons/icon-192.png" alt="LifeStack Logo" style={{width:22,height:22,borderRadius:6}} />
           <span style={{fontFamily:"'Poppins',sans-serif",fontWeight:700,fontSize:"0.82rem",color:"rgba(255,255,255,0.25)"}}>LifeStack</span>
         </div>
         <span style={{fontFamily:"'Poppins',sans-serif",fontSize:"0.68rem",color:"rgba(255,255,255,0.12)",letterSpacing:"0.06em"}}>Build your empire, one day at a time.</span>
       </footer>
+
+      {/* ── INSTALL PWA MODAL ── */}
+      {isInstallModalOpen && (
+        <div style={{ position: "fixed", inset: 0, zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(6, 6, 15, 0.8)", backdropFilter: "blur(12px)", padding: 20 }}>
+          <div style={{ background: "#0c0c16", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: 24, padding: "32px 28px", maxWidth: 480, width: "100%", position: "relative", boxShadow: "0 24px 80px rgba(0,0,0,0.5)", animation: "fadeUp 0.3s ease" }}>
+            
+            {/* Close button */}
+            <button onClick={() => setIsInstallModalOpen(false)} style={{ position: "absolute", top: 20, right: 20, background: "none", border: "none", color: "rgba(255,255,255,0.4)", cursor: "pointer", fontSize: "1.2rem", padding: 4 }}
+              onMouseEnter={e => e.currentTarget.style.color = "#fff"}
+              onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.4)"}
+            >✕</button>
+
+            {/* Header */}
+            <div style={{ textAlign: "center", marginBottom: 24 }}>
+              <img src="/icons/icon-192.png" alt="LifeStack Logo" style={{width:56,height:56,borderRadius:16,margin:"0 auto 16px",boxShadow:"0 8px 24px rgba(255,106,0,0.3)"}} />
+              <h3 style={{ fontFamily: "'Poppins',sans-serif", fontWeight: 900, fontSize: "1.4rem", color: "#fff", margin: "0 0 8px" }}>Install LifeStack</h3>
+              <p style={{ fontFamily: "'Poppins',sans-serif", fontSize: "0.85rem", color: "rgba(255,255,255,0.4)", margin: 0 }}>Add LifeStack to your desktop or mobile home screen</p>
+            </div>
+
+            {/* Content based on device */}
+            <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)", borderRadius: 16, padding: 20, marginBottom: 24 }}>
+              {deviceType === "desktop" && (
+                <div>
+                  <h4 style={{ color: "#FF6A00", margin: "0 0 10px", fontWeight: 700, fontSize: "0.95rem" }}>On your Laptop or PC:</h4>
+                  <ol style={{ color: "rgba(255,255,255,0.7)", fontSize: "0.85rem", paddingLeft: 20, lineHeight: 1.8, margin: 0 }}>
+                    <li>Look at your browser's **URL address bar** (at the top right).</li>
+                    <li>Click the **Install Icon** (it looks like a small computer monitor with an arrow, or a plus `⊕` sign).</li>
+                    <li>Or click the browser's **3-dot menu** (top right) and select **"Install LifeStack"**.</li>
+                  </ol>
+                </div>
+              )}
+              {deviceType === "ios" && (
+                <div>
+                  <h4 style={{ color: "#C36BFF", margin: "0 0 10px", fontWeight: 700, fontSize: "0.95rem" }}>On iPhone or iPad (Safari):</h4>
+                  <ol style={{ color: "rgba(255,255,255,0.7)", fontSize: "0.85rem", paddingLeft: 20, lineHeight: 1.8, margin: 0 }}>
+                    <li>Tap the **Share button** 📤 at the bottom of the screen.</li>
+                    <li>Scroll down and tap **"Add to Home Screen"** ➕.</li>
+                    <li>Tap **Add in the top right to complete installation.**</li>
+                  </ol>
+                </div>
+              )}
+              {deviceType === "android" && (
+                <div>
+                  <h4 style={{ color: "#4A90FF", margin: "0 0 10px", fontWeight: 700, fontSize: "0.95rem" }}>On Android (Chrome):</h4>
+                  <ol style={{ color: "rgba(255,255,255,0.7)", fontSize: "0.85rem", paddingLeft: 20, lineHeight: 1.8, margin: 0 }}>
+                    <li>Tap the browser's **3-dot menu** in the top right corner.</li>
+                    <li>Tap **"Install App"** or **"Add to Home screen"**.</li>
+                    <li>Follow the prompt to install the app.</li>
+                  </ol>
+                </div>
+              )}
+            </div>
+
+            {/* OK Button */}
+            <button onClick={() => setIsInstallModalOpen(false)} style={{ background: "linear-gradient(135deg,#FF6A00,#C36BFF)", border: "none", borderRadius: 12, color: "#fff", padding: "12px 0", width: "100%", fontFamily: "'Poppins',sans-serif", fontSize: "0.9rem", fontWeight: 700, cursor: "pointer", boxShadow: "0 4px 20px rgba(255,106,0,0.3)" }}>
+              Got It
+            </button>
+
+          </div>
+        </div>
+      )}
+
+      {/* ── STANDALONE PREMIUM SPLASH SCREEN OVERLAY ── */}
+      {isStandaloneSplash && (
+        <div style={{
+          position: "fixed", inset: 0, zIndex: 99999,
+          background: "#06060f", display: "flex", flexDirection: "column",
+          alignItems: "center", justifyContent: "center",
+          fontFamily: "'Poppins',sans-serif"
+        }}>
+          <style>{`
+            @keyframes splashPulse {
+              0%, 100% { transform: scale(1); filter: drop-shadow(0 0 20px rgba(255, 106, 0, 0.45)); }
+              50% { transform: scale(1.08); filter: drop-shadow(0 0 45px rgba(195, 107, 255, 0.75)); }
+            }
+            @keyframes splashBar {
+              0% { width: 0%; }
+              100% { width: 100%; }
+            }
+          `}</style>
+          
+          <div style={{ textAlign: "center" }}>
+            {/* Pulsing premium logo */}
+            <img src="/icons/icon-192.png" alt="LifeStack" style={{
+              width: 96, height: 96, borderRadius: 24,
+              marginBottom: 24, animation: "splashPulse 2.2s infinite ease-in-out"
+            }} />
+            
+            {/* Pulsing app name */}
+            <h2 style={{
+              fontFamily: "'Poppins',sans-serif", fontWeight: 900,
+              fontSize: "2.2rem", color: "#fff", margin: "0 0 10px",
+              letterSpacing: "0.04em", background: "linear-gradient(90deg, #FF6A00, #C36BFF)",
+              WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent"
+            }}>
+              LifeStack
+            </h2>
+            
+            <p style={{
+              fontFamily: "'Poppins',sans-serif", fontSize: "0.85rem",
+              color: "rgba(255,255,255,0.35)", letterSpacing: "0.12em",
+              textTransform: "uppercase", fontWeight: 600, margin: "0 0 32px"
+            }}>
+              Personal Growth OS
+            </p>
+            
+            {/* Sleek Progress Bar loader */}
+            <div style={{
+              width: 140, height: 3, background: "rgba(255,255,255,0.06)",
+              borderRadius: 100, margin: "0 auto", overflow: "hidden", position: "relative"
+            }}>
+              <div style={{
+                position: "absolute", top: 0, left: 0, height: "100%",
+                background: "linear-gradient(90deg, #FF6A00, #C36BFF)",
+                borderRadius: 100, animation: "splashBar 1.5s ease-out forwards"
+              }} />
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

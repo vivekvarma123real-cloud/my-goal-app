@@ -120,11 +120,7 @@ export default function LoginPage() {
         {/* Logo */}
         <div style={{textAlign:"center",marginBottom:32}}>
           <div style={{display:"inline-flex",alignItems:"center",gap:10,marginBottom:12}}>
-            <div style={{width:40,height:40,borderRadius:11,background:"linear-gradient(135deg,#FF6A00,#ff9a3c)",display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 4px 20px rgba(255,106,0,0.4)"}}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
-              </svg>
-            </div>
+            <img src="/icons/icon-192.png" alt="LifeStack Logo" style={{width:40,height:40,borderRadius:11,boxShadow:"0 4px 20px rgba(255,106,0,0.4)"}} />
             <span style={{fontFamily:"'Poppins',sans-serif",fontWeight:900,fontSize:"1.6rem",color:"#fff",letterSpacing:"-0.01em"}}>LifeStack</span>
           </div>
           <p style={{fontFamily:"'Poppins',sans-serif",fontSize:"0.82rem",color:"rgba(255,255,255,0.35)",margin:0}}>

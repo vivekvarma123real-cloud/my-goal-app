@@ -37,11 +37,7 @@ export default function ChoosePage() {
       {/* Header */}
       <div style={{textAlign:"center",marginBottom:48,animation:"fadeUp 0.6s ease both"}}>
         <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:8,marginBottom:12}}>
-          <div style={{width:28,height:28,borderRadius:7,background:"linear-gradient(135deg,#FF6A00,#C36BFF)",display:"flex",alignItems:"center",justifyContent:"center"}}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
-            </svg>
-          </div>
+          <img src="/icons/icon-192.png" alt="LifeStack Logo" style={{width:28,height:28,borderRadius:7}} />
           <span style={{fontFamily:"'Poppins',sans-serif",fontWeight:800,fontSize:"0.9rem",color:"rgba(255,255,255,0.5)",letterSpacing:"0.06em"}}>LifeStack</span>
         </div>
         <h1 style={{fontFamily:"'Poppins',sans-serif",fontWeight:900,fontSize:"clamp(1.8rem,4vw,2.6rem)",color:"#fff",margin:"0 0 10px",lineHeight:1.1}}>
