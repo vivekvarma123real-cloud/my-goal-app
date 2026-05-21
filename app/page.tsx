@@ -23,7 +23,8 @@ export default function LandingPage() {
   const [deviceType, setDeviceType] = useState<"ios" | "android" | "desktop">("desktop");
   const [isDevMode, setIsDevMode] = useState(false);
   const [isStandaloneSplash, setIsStandaloneSplash] = useState(false);
-  const [splashLoading, setSplashLoading] = useState(true);
+  const [splashFade, setSplashFade] = useState(false);
+  const [isEntering, setIsEntering] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animRef = useRef<number>(0);
 
@@ -47,15 +48,15 @@ export default function LandingPage() {
       
       if (isStandalone) {
         setIsStandaloneSplash(true);
-        supabase.auth.getSession().then(({ data: { session } }) => {
+        setTimeout(() => {
+          setSplashFade(true);
           setTimeout(() => {
-            setSplashLoading(false);
-            router.replace(session ? "/choose" : "/login");
-          }, 1500); // Premium loading duration for smooth splash pulse
-        });
+            setIsStandaloneSplash(false);
+          }, 600); // Wait for opacity transition to finish
+        }, 1800); // Premium loading duration for smooth splash pulse
       }
     }
-  }, [router]);
+  }, []);
 
   useEffect(() => {
     // Dev mode check for PWA buttons
@@ -180,7 +181,12 @@ export default function LandingPage() {
     }
   };
 
-  const goTo = () => router.push(isLoggedIn ? "/choose" : "/login");
+  const goTo = () => {
+    setIsEntering(true);
+    setTimeout(() => {
+      router.push(isLoggedIn ? "/choose" : "/login");
+    }, 1200);
+  };
 
   return (
     <div style={{ minHeight:"100vh", background:"#06060f", fontFamily:"'Poppins',sans-serif", overflowX:"hidden", position:"relative" }}>
@@ -242,7 +248,7 @@ export default function LandingPage() {
             >Log Out</button>
           )}
 
-          <button onClick={goTo} className="btn-primary" style={{background:"linear-gradient(135deg,#FF6A00,#C36BFF)",border:"none",borderRadius:9,color:"#fff",padding:"9px 26px",cursor:"pointer",fontFamily:"'Poppins',sans-serif",fontSize:"0.82rem",fontWeight:700,letterSpacing:"0.02em",boxShadow:"0 4px 20px rgba(255,106,0,0.3)"}}>Get Started</button>
+          <button onClick={goTo} className="btn-primary" style={{background:"linear-gradient(135deg,#FF6A00,#C36BFF)",border:"none",borderRadius:9,color:"#fff",padding:"9px 26px",cursor:"pointer",fontFamily:"'Poppins',sans-serif",fontSize:"0.82rem",fontWeight:700,letterSpacing:"0.02em",boxShadow:"0 4px 20px rgba(255,106,0,0.3)"}}>Enter System</button>
         </div>
       </nav>
 
@@ -270,7 +276,7 @@ export default function LandingPage() {
         {/* CTAs */}
         <div style={{display:"flex",gap:14,justifyContent:"center",flexWrap:"wrap",marginBottom:80,animation:"fadeUp 1s ease 0.8s both",opacity:0}}>
           <button onClick={goTo} className="btn-primary" style={{background:"linear-gradient(135deg,#FF6A00,#ff9a3c)",border:"none",borderRadius:14,color:"#fff",padding:"17px 48px",cursor:"pointer",fontFamily:"'Poppins',sans-serif",fontSize:"1rem",fontWeight:800,letterSpacing:"0.02em",boxShadow:"0 8px 32px rgba(255,106,0,0.4)"}}>
-            Start Building →
+            Enter System →
           </button>
           <button onClick={()=>document.getElementById("systems")?.scrollIntoView({behavior:"smooth"})} className="btn-ghost" style={{background:"rgba(255,255,255,0.04)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:14,color:"rgba(255,255,255,0.65)",padding:"17px 36px",cursor:"pointer",fontFamily:"'Poppins',sans-serif",fontSize:"1rem",fontWeight:600,backdropFilter:"blur(10px)",transition:"all 0.3s"}}>
             See How It Works ↓
@@ -651,7 +657,10 @@ export default function LandingPage() {
           position: "fixed", inset: 0, zIndex: 99999,
           background: "#06060f", display: "flex", flexDirection: "column",
           alignItems: "center", justifyContent: "center",
-          fontFamily: "'Poppins',sans-serif"
+          fontFamily: "'Poppins',sans-serif",
+          transition: "opacity 0.6s ease-in-out",
+          opacity: splashFade ? 0 : 1,
+          pointerEvents: splashFade ? "none" : "auto"
         }}>
           <style>{`
             @keyframes splashPulse {
@@ -700,6 +709,67 @@ export default function LandingPage() {
                 borderRadius: 100, animation: "splashBar 1.5s ease-out forwards"
               }} />
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── HIGH-TECH TRANSITIONAL SYSTEM LOADER ── */}
+      {isEntering && (
+        <div style={{
+          position: "fixed", inset: 0, zIndex: 999999,
+          background: "#06060f", display: "flex", flexDirection: "column",
+          alignItems: "center", justifyContent: "center",
+          fontFamily: "'Poppins',sans-serif",
+          animation: "fadeIn 0.4s ease both"
+        }}>
+          <style>{`
+            @keyframes scanLine {
+              0% { top: 0%; opacity: 0; }
+              10% { opacity: 1; }
+              90% { opacity: 1; }
+              100% { top: 100%; opacity: 0; }
+            }
+            @keyframes pulseText {
+              0%, 100% { opacity: 0.6; }
+              50% { opacity: 1; }
+            }
+          `}</style>
+          
+          <div style={{
+            position: "absolute", left: 0, top: 0, width: "100%", height: "2px",
+            background: "linear-gradient(90deg, transparent, #FF6A00, #C36BFF, transparent)",
+            animation: "scanLine 1.2s ease-in-out infinite",
+            pointerEvents: "none"
+          }} />
+          
+          <div style={{ textAlign: "center" }}>
+            {/* Spinning micro ring */}
+            <div style={{
+              width: 60, height: 60, borderRadius: "50%",
+              border: "2px solid rgba(255, 106, 0, 0.15)",
+              borderTopColor: "#FF6A00", borderBottomColor: "#C36BFF",
+              animation: "splashPulse 1.5s infinite linear",
+              margin: "0 auto 24px",
+              display: "flex", alignItems: "center", justifyContent: "center"
+            }}>
+              <img src="/icons/icon-192.png" alt="LifeStack" style={{ width: 32, height: 32, borderRadius: 8 }} />
+            </div>
+            
+            <h3 style={{
+              fontWeight: 800, fontSize: "1.2rem", color: "#fff",
+              letterSpacing: "0.15em", textTransform: "uppercase", margin: "0 0 8px",
+              background: "linear-gradient(90deg, #FF6A00, #C36BFF)",
+              WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+              animation: "pulseText 1.2s infinite ease-in-out"
+            }}>
+              Initializing OS
+            </h3>
+            <p style={{
+              fontSize: "0.75rem", color: "rgba(255,255,255,0.35)",
+              letterSpacing: "0.08em", margin: 0
+            }}>
+              Connecting to secure core workspace...
+            </p>
           </div>
         </div>
       )}
