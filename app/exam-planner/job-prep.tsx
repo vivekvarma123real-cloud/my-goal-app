@@ -92,7 +92,8 @@ const TRACK_COLORS: Record<string, string> = {
 };
 
 const UID = () => Math.random().toString(36).substr(2, 9);
-const TODAY = () => new Date().toISOString().split('T')[0];
+const localDateString = (d: Date = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+const TODAY = () => localDateString();
 
 function JobPrepLockScreen() {
   return (
@@ -370,7 +371,7 @@ export default function JobPrepPlanner({ onSwitchMode }: { onSwitchMode: () => v
                   const monday = new Date(now); monday.setDate(now.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
                   const days = Array.from({length:7},(_,i)=>{const d=new Date(monday);d.setDate(monday.getDate()+i);return d;});
                   const dayLabels = ['M','T','W','T','F','S','S'];
-                  const barData = days.map(d => { const ds = d.toISOString().split('T')[0]; return store.tasks.filter(t => t.date === ds && t.status === 'done').length; });
+                  const barData = days.map(d => { const ds = localDateString(d); return store.tasks.filter(t => t.date === ds && t.status === 'done').length; });
                   const maxVal = Math.max(...barData, 1);
                   const chartH = 90; const barW = 22; const gap = 10; const totalW = 7 * barW + 6 * gap;
                   return (
@@ -386,7 +387,7 @@ export default function JobPrepPlanner({ onSwitchMode }: { onSwitchMode: () => v
                 <div className="jp-section-title" style={{marginBottom:16,fontSize:'0.95rem'}}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Monthly Tasks</div>
                 {(() => {
                   const now = new Date(); const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-                  const monthData = Array.from({length: daysInMonth}, (_, i) => { const d = new Date(now.getFullYear(), now.getMonth(), i + 1); return store.tasks.filter(t => t.date === d.toISOString().split('T')[0] && t.status === 'done').length; });
+                  const monthData = Array.from({length: daysInMonth}, (_, i) => { const d = new Date(now.getFullYear(), now.getMonth(), i + 1); return store.tasks.filter(t => t.date === localDateString(d) && t.status === 'done').length; });
                   const maxT = Math.max(...monthData, 1); const chartW = 220; const chartH = 80; const stepX = chartW / (daysInMonth - 1);
                   const points = monthData.map((v, i) => `${i * stepX},${chartH - (v / maxT) * chartH}`).join(' ');
                   return (
@@ -404,7 +405,7 @@ export default function JobPrepPlanner({ onSwitchMode }: { onSwitchMode: () => v
                 <div className="jp-section-title" style={{marginBottom:16,fontSize:'0.95rem'}}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Heatmap</div>
                 {(() => {
                   const today = new Date(); const cells: { date: string; count: number; col: number; row: number }[] = [];
-                  for (let i = 89; i >= 0; i--) { const d = new Date(today); d.setDate(today.getDate() - i); const ds = d.toISOString().split('T')[0]; cells.push({ date: ds, count: store.tasks.filter(t => t.date === ds && t.status === 'done').length, col: Math.floor((89 - i) / 7), row: d.getDay() === 0 ? 6 : d.getDay() - 1 }); }
+                  for (let i = 89; i >= 0; i--) { const d = new Date(today); d.setDate(today.getDate() - i); const ds = localDateString(d); cells.push({ date: ds, count: store.tasks.filter(t => t.date === ds && t.status === 'done').length, col: Math.floor((89 - i) / 7), row: d.getDay() === 0 ? 6 : d.getDay() - 1 }); }
                   const cellSize = 10; const gapC = 2; const cols = Math.ceil(90 / 7) + 1;
                   return (
                     <div>
@@ -760,8 +761,8 @@ function WeeklyPlanner({ store, updateStore }: { store: Store; updateStore: (fn:
 
   // Weekly stats
   const weekTasks = store.tasks.filter(t => {
-    const startStr = weekDays[0].toISOString().split('T')[0];
-    const endStr = weekDays[6].toISOString().split('T')[0];
+    const startStr = localDateString(weekDays[0]);
+    const endStr = localDateString(weekDays[6]);
     return t.date >= startStr && t.date <= endStr;
   });
   const plannedMins = weekTasks.reduce((a, t) => a + t.duration, 0);
@@ -811,7 +812,7 @@ function WeeklyPlanner({ store, updateStore }: { store: Store; updateStore: (fn:
       {/* Day Columns */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 12 }}>
         {weekDays.map((day, i) => {
-          const dateStr = day.toISOString().split('T')[0];
+          const dateStr = localDateString(day);
           const isToday = dateStr === todayStr;
           const isPast = dateStr < todayStr;
           const dayTasks = store.tasks.filter(t => t.date === dateStr);
