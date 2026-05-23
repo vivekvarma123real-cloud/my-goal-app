@@ -1,8 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function ChoosePage() {
+  const router = useRouter();
   const isProduction = process.env.NODE_ENV === "production";
   const [hoverGoal,  setHoverGoal]   = useState(false);
   const [hoverHabit, setHoverHabit]  = useState(false);
@@ -11,7 +13,7 @@ export default function ChoosePage() {
   const [hoverExam,setHoverExam] = useState(false);
 
   return (
-    <div style={{
+    <div className="choose-container" style={{
       minHeight:"100vh", background:"#05050f",
       display:"flex", flexDirection:"column",
       alignItems:"center", justifyContent:"center",
@@ -20,10 +22,52 @@ export default function ChoosePage() {
       <style>{`
         @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
         @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.6}}
+
+        @media (max-width: 600px) {
+          .choose-container {
+            padding: 12px !important;
+          }
+          .back-btn {
+            position: fixed !important;
+            top: 12px !important;
+            left: 12px !important;
+            padding: 4px 10px !important;
+            font-size: 0.7rem !important;
+          }
+          .header-container {
+            margin-bottom: 24px !important;
+            margin-top: 40px !important;
+          }
+          .cards-grid {
+            gap: 12px !important;
+          }
+          .system-card {
+            padding: 24px 18px !important;
+            border-radius: 16px !important;
+          }
+          .system-card h2 {
+            font-size: 1.15rem !important;
+          }
+          .system-card p {
+            font-size: 0.78rem !important;
+            margin-bottom: 16px !important;
+            line-height: 1.5 !important;
+          }
+          .system-card-icon {
+            width: 48px !important;
+            height: 48px !important;
+            border-radius: 12px !important;
+            margin-bottom: 14px !important;
+          }
+          .system-card-icon svg {
+            width: 22px !important;
+            height: 22px !important;
+          }
+        }
       `}</style>
 
       {/* Back */}
-      <button onClick={()=>window.location.href="/"} style={{
+      <button onClick={()=>router.push("/")} className="back-btn" style={{
         position:"fixed",top:24,left:24,
         background:"rgba(255,255,255,0.05)",border:"1px solid rgba(255,255,255,0.1)",
         borderRadius:8,color:"rgba(255,255,255,0.5)",padding:"6px 14px",
@@ -35,7 +79,7 @@ export default function ChoosePage() {
       >← Back</button>
 
       {/* Header */}
-      <div style={{textAlign:"center",marginBottom:48,animation:"fadeUp 0.6s ease both"}}>
+      <div className="header-container" style={{textAlign:"center",marginBottom:48,animation:"fadeUp 0.6s ease both"}}>
         <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:8,marginBottom:12}}>
           <img src="/icons/icon-192.png" alt="LifeStack Logo" style={{width:28,height:28,borderRadius:7}} />
           <span style={{fontFamily:"'Poppins',sans-serif",fontWeight:800,fontSize:"0.9rem",color:"rgba(255,255,255,0.5)",letterSpacing:"0.06em"}}>LifeStack</span>
@@ -49,11 +93,12 @@ export default function ChoosePage() {
       </div>
 
       {/* Cards */}
-      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(min(260px,100%),1fr))",gap:18,width:"100%",maxWidth:1060,padding:"0 4px"}}>
+      <div className="cards-grid" style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(min(260px,100%),1fr))",gap:18,width:"100%",maxWidth:1060,padding:"0 4px"}}>
 
         {/* Battle Manual */}
         <div onMouseEnter={()=>setHoverBattle(true)} onMouseLeave={()=>setHoverBattle(false)}
-          onClick={()=>window.location.href="/battle-manual"}
+          onClick={()=>router.push("/battle-manual")}
+          className="system-card"
           style={{
             background:hoverBattle?"rgba(255,59,59,0.07)":"rgba(255,255,255,0.03)",
             border:`2px solid ${hoverBattle?"rgba(255,59,59,0.45)":"rgba(255,255,255,0.07)"}`,
@@ -64,7 +109,7 @@ export default function ChoosePage() {
             animation:"fadeUp 0.6s ease 0.1s both",position:"relative",overflow:"hidden",
           }}>
           <div style={{position:"absolute",top:-60,right:-60,width:180,height:180,borderRadius:"50%",background:"radial-gradient(circle,rgba(255,59,59,0.1),transparent)",pointerEvents:"none"}}/>
-          <div style={{
+          <div className="system-card-icon" style={{
             width:64,height:64,borderRadius:18,margin:"0 auto 20px",
             background:"linear-gradient(135deg,#ff3b3b,#FF6A00)",
             display:"flex",alignItems:"center",justifyContent:"center",
@@ -99,7 +144,8 @@ export default function ChoosePage() {
 
         {/* Daily Introspection */}
         <div onMouseEnter={()=>setHoverIntro(true)} onMouseLeave={()=>setHoverIntro(false)}
-          onClick={()=>window.location.href="/introspection"}
+          onClick={()=>router.push("/introspection")}
+          className="system-card"
           style={{
             background:hoverIntro?"rgba(74,222,128,0.08)":"rgba(255,255,255,0.03)",
             border:`2px solid ${hoverIntro?"rgba(74,222,128,0.5)":"rgba(255,255,255,0.07)"}`,
@@ -110,7 +156,7 @@ export default function ChoosePage() {
             animation:"fadeUp 0.6s ease 0.2s both",position:"relative",overflow:"hidden",
           }}>
           <div style={{position:"absolute",top:-60,right:-60,width:180,height:180,borderRadius:"50%",background:"radial-gradient(circle,rgba(74,222,128,0.1),transparent)",pointerEvents:"none"}}/>
-          <div style={{
+          <div className="system-card-icon" style={{
             width:64,height:64,borderRadius:18,margin:"0 auto 20px",
             background:"linear-gradient(135deg,#4ade80,#22c55e)",
             display:"flex",alignItems:"center",justifyContent:"center",
@@ -134,7 +180,8 @@ export default function ChoosePage() {
 
         {/* Goal Planner */}
         <div onMouseEnter={()=>setHoverGoal(true)} onMouseLeave={()=>setHoverGoal(false)}
-          onClick={()=>window.location.href="/goal-planner"}
+          onClick={()=>router.push("/goal-planner")}
+          className="system-card"
           style={{
             background:hoverGoal?"rgba(255,106,0,0.08)":"rgba(255,255,255,0.03)",
             border:`2px solid ${hoverGoal?"rgba(255,106,0,0.5)":"rgba(255,255,255,0.07)"}`,
@@ -145,7 +192,7 @@ export default function ChoosePage() {
             animation:"fadeUp 0.6s ease 0.3s both",position:"relative",overflow:"hidden",
           }}>
           <div style={{position:"absolute",top:-60,right:-60,width:180,height:180,borderRadius:"50%",background:"radial-gradient(circle,rgba(255,106,0,0.1),transparent)",pointerEvents:"none"}}/>
-          <div style={{
+          <div className="system-card-icon" style={{
             width:64,height:64,borderRadius:18,margin:"0 auto 20px",
             background:"linear-gradient(135deg,#FF6A00,#ff9a3c)",
             display:"flex",alignItems:"center",justifyContent:"center",
@@ -173,7 +220,8 @@ export default function ChoosePage() {
 
         {/* Habit Tracker */}
         <div onMouseEnter={()=>setHoverHabit(true)} onMouseLeave={()=>setHoverHabit(false)}
-          onClick={()=>window.location.href="/habit-tracker"}
+          onClick={()=>router.push("/habit-tracker")}
+          className="system-card"
           style={{
             background:hoverHabit?"rgba(195,107,255,0.08)":"rgba(255,255,255,0.03)",
             border:`2px solid ${hoverHabit?"rgba(195,107,255,0.5)":"rgba(255,255,255,0.07)"}`,
@@ -184,7 +232,7 @@ export default function ChoosePage() {
             animation:"fadeUp 0.6s ease 0.4s both",position:"relative",overflow:"hidden",
           }}>
           <div style={{position:"absolute",top:-60,right:-60,width:180,height:180,borderRadius:"50%",background:"radial-gradient(circle,rgba(195,107,255,0.1),transparent)",pointerEvents:"none"}}/>
-          <div style={{
+          <div className="system-card-icon" style={{
             width:64,height:64,borderRadius:18,margin:"0 auto 20px",
             background:"linear-gradient(135deg,#C36BFF,#4A90FF)",
             display:"flex",alignItems:"center",justifyContent:"center",
@@ -214,8 +262,9 @@ export default function ChoosePage() {
         <div onMouseEnter={()=>setHoverExam(true)} onMouseLeave={()=>setHoverExam(false)}
           onClick={() => {
             localStorage.removeItem("lifestack-planner-mode");
-            window.location.href = "/exam-planner";
+            router.push("/exam-planner");
           }}
+          className="system-card"
           style={{
             background:hoverExam?"rgba(195,107,255,0.08)":"rgba(255,255,255,0.03)",
             border:`2px solid ${hoverExam?"rgba(195,107,255,0.5)":"rgba(255,255,255,0.07)"}`,
@@ -227,7 +276,7 @@ export default function ChoosePage() {
             opacity:1,
           }}>
           <div style={{position:"absolute",top:-60,right:-60,width:180,height:180,borderRadius:"50%",background:"radial-gradient(circle,rgba(195,107,255,0.12),transparent)",pointerEvents:"none"}}/>
-          <div style={{
+          <div className="system-card-icon" style={{
             width:64,height:64,borderRadius:18,margin:"0 auto 20px",
             background:"linear-gradient(135deg,#C36BFF,#4A90FF)",
             display:"flex",alignItems:"center",justifyContent:"center",

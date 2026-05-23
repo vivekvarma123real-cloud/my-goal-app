@@ -1,11 +1,13 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
 const toEmail = (u: string) => `${u.toLowerCase().trim()}@lifestack.app`;
 
 export default function LoginPage() {
+  const router = useRouter();
   const [tab, setTab]           = useState<"signup"|"login">("signup");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -53,7 +55,7 @@ export default function LoginPage() {
 
     // Success — redirect to choose page
     setTimeout(() => {
-      window.location.href = "/choose";
+      router.push("/choose");
     }, 500);
   };
 

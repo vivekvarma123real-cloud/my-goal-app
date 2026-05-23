@@ -52,6 +52,9 @@ export default function LandingPage() {
           setSplashFade(true);
           setTimeout(() => {
             setIsStandaloneSplash(false);
+            supabase.auth.getSession().then(({ data: { session } }) => {
+              router.push(session ? "/choose" : "/login");
+            });
           }, 600); // Wait for opacity transition to finish
         }, 1800); // Premium loading duration for smooth splash pulse
       }
@@ -210,6 +213,31 @@ export default function LandingPage() {
         *{scrollbar-width:thin;scrollbar-color:#FF6A00 #111}
         *::-webkit-scrollbar{width:3px}
         *::-webkit-scrollbar-thumb{background:linear-gradient(#FF6A00,#C36BFF);border-radius:2px}
+
+        @media (max-width: 600px) {
+          .nav-container {
+            padding: 8px 12px !important;
+          }
+          .brand-name {
+            display: none !important;
+          }
+          .nav-links {
+            display: none !important;
+          }
+          .nav-right {
+            gap: 8px !important;
+          }
+          .nav-btn-logout {
+            padding: 6px 10px !important;
+            font-size: 0.7rem !important;
+            white-space: nowrap !important;
+          }
+          .nav-btn-enter {
+            padding: 6px 12px !important;
+            font-size: 0.7rem !important;
+            white-space: nowrap !important;
+          }
+        }
       `}</style>
 
       {/* Cursor glow */}
@@ -227,12 +255,12 @@ export default function LandingPage() {
       <div style={{position:"fixed",inset:0,backgroundImage:"linear-gradient(rgba(255,255,255,0.014) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.014) 1px,transparent 1px)",backgroundSize:"80px 80px",zIndex:0,pointerEvents:"none"}}/>
 
       {/* ── NAV ── */}
-      <nav style={{position:"fixed",top:0,left:0,right:0,zIndex:100,padding:"12px 20px",display:"flex",alignItems:"center",justifyContent:"space-between",background:"rgba(6,6,15,0.88)",backdropFilter:"blur(24px)",borderBottom:"1px solid rgba(255,255,255,0.05)"}}>
+      <nav className="nav-container" style={{position:"fixed",top:0,left:0,right:0,zIndex:100,padding:"12px 20px",display:"flex",alignItems:"center",justifyContent:"space-between",background:"rgba(6,6,15,0.88)",backdropFilter:"blur(24px)",borderBottom:"1px solid rgba(255,255,255,0.05)"}}>
         <div style={{display:"flex",alignItems:"center",gap:10}}>
           <img src="/icons/icon-192.png" alt="LifeStack Logo" style={{width:34,height:34,borderRadius:9,boxShadow:"0 4px 16px rgba(255,106,0,0.35)",animation:"borderAnim 3s ease infinite"}} />
-          <span style={{fontFamily:"'Poppins',sans-serif",fontWeight:900,fontSize:"1.1rem",color:"#fff",letterSpacing:"0.02em"}}>LifeStack</span>
+          <span className="brand-name" style={{fontFamily:"'Poppins',sans-serif",fontWeight:900,fontSize:"1.1rem",color:"#fff",letterSpacing:"0.02em"}}>LifeStack</span>
         </div>
-        <div style={{display:"flex",alignItems:"center",gap:16}}>
+        <div className="nav-right" style={{display:"flex",alignItems:"center",gap:16}}>
           <div className="nav-links" style={{display:"flex",gap:20}}>
             {[["Features","features"],["Systems","systems"]].map(([l,id])=>(
               <button key={id} onClick={()=>document.getElementById(id)?.scrollIntoView({behavior:"smooth"})} style={{background:"none",border:"none",color:"rgba(255,255,255,0.45)",cursor:"pointer",fontFamily:"'Poppins',sans-serif",fontSize:"0.82rem",fontWeight:500,transition:"color 0.2s",letterSpacing:"0.02em"}}
@@ -242,13 +270,13 @@ export default function LandingPage() {
             ))}
           </div>
           {isLoggedIn&&(
-            <button onClick={handleSignOut} style={{background:"none",border:"1px solid rgba(248,113,113,0.25)",borderRadius:7,color:"rgba(248,113,113,0.6)",padding:"7px 16px",cursor:"pointer",fontFamily:"'Poppins',sans-serif",fontSize:"0.78rem",fontWeight:600,transition:"all 0.2s"}}
+            <button onClick={handleSignOut} className="nav-btn-logout" style={{background:"none",border:"1px solid rgba(248,113,113,0.25)",borderRadius:7,color:"rgba(248,113,113,0.6)",padding:"7px 16px",cursor:"pointer",fontFamily:"'Poppins',sans-serif",fontSize:"0.78rem",fontWeight:600,transition:"all 0.2s"}}
               onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.color="#f87171";(e.currentTarget as HTMLElement).style.borderColor="#f87171";}}
               onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.color="rgba(248,113,113,0.6)";(e.currentTarget as HTMLElement).style.borderColor="rgba(248,113,113,0.25)";}}
             >Log Out</button>
           )}
 
-          <button onClick={goTo} className="btn-primary" style={{background:"linear-gradient(135deg,#FF6A00,#C36BFF)",border:"none",borderRadius:9,color:"#fff",padding:"9px 26px",cursor:"pointer",fontFamily:"'Poppins',sans-serif",fontSize:"0.82rem",fontWeight:700,letterSpacing:"0.02em",boxShadow:"0 4px 20px rgba(255,106,0,0.3)"}}>Enter System</button>
+          <button onClick={goTo} className="btn-primary nav-btn-enter" style={{background:"linear-gradient(135deg,#FF6A00,#C36BFF)",border:"none",borderRadius:9,color:"#fff",padding:"9px 26px",cursor:"pointer",fontFamily:"'Poppins',sans-serif",fontSize:"0.82rem",fontWeight:700,letterSpacing:"0.02em",boxShadow:"0 4px 20px rgba(255,106,0,0.3)"}}>Enter System</button>
         </div>
       </nav>
 

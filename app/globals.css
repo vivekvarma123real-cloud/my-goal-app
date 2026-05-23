@@ -754,3 +754,35 @@ video {
   --border:      rgba(255,255,255,0.08);
   --border-act:  #6366F1;
 }
+
+/* ── Mobile Layout Optimization Overrides ── */
+@media (max-width: 768px) {
+  /* Hide empty spacer divs on mobile */
+  .habit-tracker-grid > div:empty {
+    display: none !important;
+  }
+}
+
+@media (max-width: 600px) {
+  /* Prevent Month & Week buttons rows from wrapping to multiple lines */
+  .month-scroll-container, .week-scroll-container {
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    max-width: calc(100vw - 110px) !important;
+    scrollbar-width: none !important; /* Hide scrollbar for standard browsers */
+    -ms-overflow-style: none; /* Hide scrollbar for IE/Edge */
+    display: flex !important;
+    gap: 4px !important;
+    padding-bottom: 2px !important;
+  }
+  
+  .month-scroll-container::-webkit-scrollbar, 
+  .week-scroll-container::-webkit-scrollbar {
+    display: none !important; /* Hide scrollbar for Chrome/Safari */
+  }
+
+  .month-scroll-container button,
+  .week-scroll-container button {
+    flex-shrink: 0 !important;
+  }
+}

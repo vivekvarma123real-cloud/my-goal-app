@@ -937,7 +937,7 @@ export default function GoalPlannerPage() {
 
     // Then fetch fresh from Supabase in background
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!session) { window.location.href = "/login"; return; }
+      if (!session) { router.push("/login"); return; }
       const uid = session.user.id;
       setUserId(uid);
       fetchGoals(uid).then(data => {
@@ -1004,12 +1004,15 @@ export default function GoalPlannerPage() {
             onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.borderColor="#FF6A00";(e.currentTarget as HTMLElement).style.color="#FF6A00";}}
             onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.borderColor="#1a1a1a";(e.currentTarget as HTMLElement).style.color="#666";}}
           >← Home</button>
-          <div>
-            <div style={{display:"flex",alignItems:"baseline",gap:6}}>
-              <span style={{fontFamily:"'Poppins',sans-serif",fontWeight:800,fontSize:"1.2rem",color:"#fff"}}>GOAL</span>
-              <span style={{fontFamily:"'Poppins',sans-serif",fontWeight:800,fontSize:"1.2rem",background:GRAD,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>PLANNER</span>
+          <div style={{display:"flex",alignItems:"center",gap:10}}>
+            <img src="/icons/icon-192.png" alt="LifeStack Logo" style={{width:32,height:32,borderRadius:8}} />
+            <div>
+              <div style={{display:"flex",alignItems:"baseline",gap:6}}>
+                <span style={{fontFamily:"'Poppins',sans-serif",fontWeight:800,fontSize:"1.2rem",color:"#fff"}}>GOAL</span>
+                <span style={{fontFamily:"'Poppins',sans-serif",fontWeight:800,fontSize:"1.2rem",background:GRAD,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>PLANNER</span>
+              </div>
+              <p style={{fontFamily:"'Poppins',sans-serif",fontSize:"0.58rem",color:"#888",margin:0,letterSpacing:"0.06em"}}>Master your discipline. Design your future.</p>
             </div>
-            <p style={{fontFamily:"'Poppins',sans-serif",fontSize:"0.58rem",color:"#888",margin:0,letterSpacing:"0.06em"}}>Master your discipline. Design your future.</p>
           </div>
         </div>
 

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { loadIntrospection, saveIntrospection } from "@/lib/introspectionDb";
 
@@ -240,6 +241,7 @@ function EditMode({ blocks, setBlocks, onRead, saving }: { blocks: Block[]; setB
 
 // ── Main Page ─────────────────────────────────────────────────────────────
 export default function IntrospectionPage() {
+  const router = useRouter();
   const [blocks, setBlocksRaw] = useState<Block[]>(DEFAULT_BLOCKS);
   const [userId, setUserId] = useState<string|null>(null);
   const [saving, setSaving] = useState(false);
@@ -256,7 +258,7 @@ export default function IntrospectionPage() {
     setLoaded(false);
 
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!session) { window.location.href = "/login"; return; }
+      if (!session) { router.push("/login"); return; }
       const uid = session.user.id;
       setUserId(uid);
 
@@ -329,16 +331,18 @@ export default function IntrospectionPage() {
       <header style={{ position:"sticky", top:0, zIndex:100, background:"rgba(7,7,15,0.97)", backdropFilter:"blur(20px)", borderBottom:"1px solid rgba(255,255,255,0.06)", padding:"12px 20px" }}>
         <div style={{ maxWidth:1100, margin:"0 auto", display:"flex", alignItems:"center", justifyContent:"space-between" }}>
           <div style={{ display:"flex", alignItems:"center", gap:12 }}>
-            <button onClick={()=>window.location.href="/choose"} style={{ background:"none", border:"1px solid rgba(255,255,255,0.1)", borderRadius:8, color:"rgba(255,255,255,0.4)", padding:"5px 12px", cursor:"pointer", fontFamily:"'Poppins',sans-serif", fontSize:"0.7rem", fontWeight:600, transition:"all 0.2s" }}
+            <button onClick={()=>router.push("/choose")} style={{ background:"none", border:"1px solid rgba(255,255,255,0.1)", borderRadius:8, color:"rgba(255,255,255,0.4)", padding:"5px 12px", cursor:"pointer", fontFamily:"'Poppins',sans-serif", fontSize:"0.7rem", fontWeight:600, transition:"all 0.2s" }}
               onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.color="#FF6A00";(e.currentTarget as HTMLElement).style.borderColor="rgba(255,106,0,0.4)";}}
               onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.color="rgba(255,255,255,0.4)";(e.currentTarget as HTMLElement).style.borderColor="rgba(255,255,255,0.1)";}}
             >← Back</button>
-            <div>
-              <div style={{ display:"flex", alignItems:"center", gap:8 }}>
-                <span style={{ fontSize:"1rem" }}>🔍</span>
-                <span style={{ fontFamily:"'Poppins',sans-serif", fontWeight:900, fontSize:"1rem", color:"#fff", letterSpacing:"0.04em" }}>DAILY INTROSPECTION</span>
+            <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+              <img src="/icons/icon-192.png" alt="LifeStack Logo" style={{ width: 28, height: 28, borderRadius: 7 }} />
+              <div>
+                <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+                  <span style={{ fontFamily:"'Poppins',sans-serif", fontWeight:900, fontSize:"1rem", color:"#fff", letterSpacing:"0.04em" }}>DAILY INTROSPECTION</span>
+                </div>
+                <p style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.52rem", color:"rgba(255,255,255,0.25)", margin:0, letterSpacing:"0.12em", textTransform:"uppercase" }}>Daily Mirror · Know Thyself</p>
               </div>
-              <p style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.52rem", color:"rgba(255,255,255,0.25)", margin:0, letterSpacing:"0.12em", textTransform:"uppercase" }}>Daily Mirror · Know Thyself</p>
             </div>
           </div>
 

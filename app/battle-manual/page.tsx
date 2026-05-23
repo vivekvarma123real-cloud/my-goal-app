@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 
 const SECTIONS = [
   {
@@ -42,6 +43,7 @@ const SECTIONS = [
 ];
 
 export default function BattleManualPage() {
+  const router = useRouter();
   const [activeSec, setActiveSec] = useState(0);
   const [page, setPage] = useState(0);
   const [flipping, setFlipping] = useState(false);
@@ -102,13 +104,16 @@ export default function BattleManualPage() {
           {/* Title row */}
           <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between" }}>
             <div style={{ display:"flex", alignItems:"center", gap:12 }}>
-              <button onClick={()=>window.location.href="/choose"} style={{ background:"none", border:`1px solid rgba(255,255,255,0.1)`, borderRadius:20, color:"rgba(255,255,255,0.4)", padding:"5px 12px", cursor:"pointer", fontFamily:"'Poppins',sans-serif", fontSize:"0.68rem", fontWeight:600, transition:"all 0.2s" }}
+              <button onClick={()=>router.push("/choose")} style={{ background:"none", border:`1px solid rgba(255,255,255,0.1)`, borderRadius:20, color:"rgba(255,255,255,0.4)", padding:"5px 12px", cursor:"pointer", fontFamily:"'Poppins',sans-serif", fontSize:"0.68rem", fontWeight:600, transition:"all 0.2s" }}
                 onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.color=color;(e.currentTarget as HTMLElement).style.borderColor=color+"60";}}
                 onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.color="rgba(255,255,255,0.4)";(e.currentTarget as HTMLElement).style.borderColor="rgba(255,255,255,0.1)";}}
               >← Back</button>
-              <div>
-                <span style={{ fontFamily:"'Poppins',sans-serif", fontWeight:900, fontSize:"1rem", color:"#fff", letterSpacing:"0.08em" }}>⚔️ BATTLE MANUAL</span>
-                <p style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.52rem", color:"rgba(255,255,255,0.2)", margin:0, letterSpacing:"0.12em", textTransform:"uppercase" }}>Personal Operating System</p>
+              <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+                <img src="/icons/icon-192.png" alt="LifeStack Logo" style={{ width: 24, height: 24, borderRadius: 6 }} />
+                <div>
+                  <span style={{ fontFamily:"'Poppins',sans-serif", fontWeight:900, fontSize:"1rem", color:"#fff", letterSpacing:"0.08em" }}>BATTLE MANUAL</span>
+                  <p style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.52rem", color:"rgba(255,255,255,0.2)", margin:0, letterSpacing:"0.12em", textTransform:"uppercase" }}>Personal Operating System</p>
+                </div>
               </div>
             </div>
             <div style={{ fontFamily:"'Poppins',sans-serif", fontSize:"0.68rem", color:"rgba(255,255,255,0.25)", fontWeight:600 }}>

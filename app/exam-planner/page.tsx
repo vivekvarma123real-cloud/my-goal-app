@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { supabase } from "../../lib/supabase";
 import { loadExam, saveExam } from "../../lib/examDb";
@@ -16,7 +17,7 @@ const today = () => localDateString();
 
 type Chapter = { id: string; name: string; done: boolean; dpps?: number; lec?: boolean; notes?: boolean; shortnotes?: boolean; pyqs?: boolean; test?: boolean; rev?: number; };
 type Subject = {
-  id: string; name: string; deadline: string;
+  id: string; name: string; deadline: string; startDate?: string;
   chapters: Chapter[]; color: string;
   dpps?: boolean; pyqs?: boolean; notes?: boolean; shortnotes?: boolean; lec?: boolean; test?: boolean; revs?: number; subjectDone?: boolean;
 };
@@ -689,6 +690,7 @@ function SubjectCard({ sub, onToggleChapter, onUpdateChapter, onUpdateSubject, o
   const [expanded, setExpanded] = useState(false);
   const [editing, setEditing] = useState(false);
   const [editName, setEditName] = useState(sub.name);
+  const [editStartDate, setEditStartDate] = useState(sub.startDate || "");
   const [editDeadline, setEditDeadline] = useState(sub.deadline);
   const [editChapters, setEditChapters] = useState<Chapter[]>(sub.chapters);
   const [newChapName, setNewChapName] = useState("");
@@ -700,13 +702,14 @@ function SubjectCard({ sub, onToggleChapter, onUpdateChapter, onUpdateSubject, o
   const dl = daysLeft(sub.deadline);
   const deadlineColor = dl < 7 ? "#ff6b6b" : dl < 21 ? "#ffa94d" : "var(--text-sub)";
   const saveEdit = () => {
-    onUpdateSubject({ name: editName.trim().toUpperCase() || sub.name, deadline: editDeadline, chapters: editChapters });
+    onUpdateSubject({ name: editName.trim().toUpperCase() || sub.name, startDate: editStartDate, deadline: editDeadline, chapters: editChapters });
     setEditing(false);
     setNewChapName("");
     setEditingChapId(null);
   };
   const cancelEdit = () => {
     setEditName(sub.name);
+    setEditStartDate(sub.startDate || "");
     setEditDeadline(sub.deadline);
     setEditChapters(sub.chapters);
     setEditing(false);
@@ -715,6 +718,7 @@ function SubjectCard({ sub, onToggleChapter, onUpdateChapter, onUpdateSubject, o
   };
   const startEditing = () => {
     setEditName(sub.name);
+    setEditStartDate(sub.startDate || "");
     setEditDeadline(sub.deadline);
     setEditChapters([...sub.chapters]);
     setEditing(true);
@@ -728,7 +732,16 @@ function SubjectCard({ sub, onToggleChapter, onUpdateChapter, onUpdateSubject, o
             {editing ? (
               <div style={{ display: "flex", flexDirection: "column", gap: 8, width: "100%" }} onClick={e => e.stopPropagation()}>
                 <input value={editName} onChange={e => setEditName(e.target.value)} placeholder="Subject name" style={{ width: "100%", padding: "8px 10px", borderRadius: 8, border: "1px solid var(--border)", background: "var(--bg-subtle)", color: "var(--text)", fontFamily: "var(--font)", fontSize: "0.85rem", fontWeight: 700 }} />
-                <CustomDatePicker value={editDeadline} onChange={setEditDeadline} fullWidth allowClear />
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                  <div style={{ flex: 1, minWidth: 120 }}>
+                    <div style={{ fontSize: "0.65rem", fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 4 }}>Start Date</div>
+                    <CustomDatePicker value={editStartDate} onChange={setEditStartDate} fullWidth allowClear />
+                  </div>
+                  <div style={{ flex: 1, minWidth: 120 }}>
+                    <div style={{ fontSize: "0.65rem", fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 4 }}>Due Date</div>
+                    <CustomDatePicker value={editDeadline} onChange={setEditDeadline} fullWidth allowClear />
+                  </div>
+                </div>
 
                 {/* Chapter management in edit mode */}
                 <div style={{ background: "var(--bg-subtle)", border: "1px solid var(--border)", borderRadius: 8, padding: 10 }}>
@@ -771,7 +784,10 @@ function SubjectCard({ sub, onToggleChapter, onUpdateChapter, onUpdateSubject, o
             ) : (
               <>
                 <div style={{ fontWeight: 700, fontSize: "0.95rem", color: "var(--text)" }}>{sub.name}</div>
-                <div style={{ fontSize: "0.7rem", color: deadlineColor, fontWeight: 600, marginTop: 2 }}>📅 Due: {sub.deadline || "No deadline"} · {dl}d left</div>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "2px 12px", marginTop: 2 }}>
+                  {sub.startDate && <div style={{ fontSize: "0.7rem", color: "var(--text-sub)", fontWeight: 600 }}>🟢 Start: {sub.startDate}</div>}
+                  <div style={{ fontSize: "0.7rem", color: deadlineColor, fontWeight: 600 }}>📅 Due: {sub.deadline || "No deadline"} · {dl}d left</div>
+                </div>
               </>
             )}
           </div>
@@ -824,6 +840,7 @@ function SubjectCard({ sub, onToggleChapter, onUpdateChapter, onUpdateSubject, o
 // ─── Add Subject Modal ────────────────────────────────────────────────────────
 function AddSubjectModal({ onAdd, onClose }: { onAdd: (s: Subject) => void; onClose: () => void }) {
   const [name, setName] = useState("");
+  const [startDate, setStartDate] = useState("");
   const [deadline, setDeadline] = useState("");
   const [color, setColor] = useState(SUBJECT_COLORS[0]);
   const [chapters, setChapters] = useState<string[]>([]);
@@ -843,7 +860,7 @@ function AddSubjectModal({ onAdd, onClose }: { onAdd: (s: Subject) => void; onCl
 
   const submit = () => {
     if (!name.trim()) return;
-    onAdd({ id: uid(), name: name.trim().toUpperCase(), deadline, color, dpps: false, pyqs: false, notes: false, shortnotes: false, lec: false, test: false, revs: 0, subjectDone: false, chapters: chapters.map(n => ({ id: uid(), name: n, done: false, dpps: 0 })) });
+    onAdd({ id: uid(), name: name.trim().toUpperCase(), startDate, deadline, color, dpps: false, pyqs: false, notes: false, shortnotes: false, lec: false, test: false, revs: 0, subjectDone: false, chapters: chapters.map(n => ({ id: uid(), name: n, done: false, dpps: 0 })) });
     onClose();
   };
 
@@ -897,8 +914,13 @@ function AddSubjectModal({ onAdd, onClose }: { onAdd: (s: Subject) => void; onCl
             <div>
               <label style={{ display: "block", fontSize: "0.7rem", fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 }}>Finish By <span style={{ fontWeight: 400, textTransform: "none" }}>(optional)</span></label>
               <CustomDatePicker value={deadline} onChange={setDeadline} fullWidth allowClear />
-
             </div>
+          </div>
+
+          {/* Start Date */}
+          <div style={{ marginBottom: 14 }}>
+            <label style={{ display: "block", fontSize: "0.7rem", fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 }}>Start Date <span style={{ fontWeight: 400, textTransform: "none" }}>(optional)</span></label>
+            <CustomDatePicker value={startDate} onChange={setStartDate} fullWidth allowClear />
           </div>
 
           {/* Chapters chip input */}
@@ -943,6 +965,7 @@ function AddSubjectModal({ onAdd, onClose }: { onAdd: (s: Subject) => void; onCl
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 function ProductionLockScreen() {
+  const router = useRouter();
   return (
     <div style={{
       minHeight: "100vh",
@@ -963,7 +986,7 @@ function ProductionLockScreen() {
           Coming soon. We are polishing this feature for a better experience.
         </p>
         <button
-          onClick={() => { window.location.href = "/choose"; }}
+          onClick={() => { router.push("/choose"); }}
           style={{
             border: "1px solid rgba(255,255,255,0.18)",
             background: "rgba(255,255,255,0.06)",
@@ -983,6 +1006,7 @@ function ProductionLockScreen() {
 }
 
 function CompetitiveExamPlanner({ onSwitchMode }: { onSwitchMode?: () => void }) {
+  const router = useRouter();
   const [store, setStore] = useState<ExamStore>(DEFAULT_STORE);
   const [userId, setUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -1253,16 +1277,18 @@ function CompetitiveExamPlanner({ onSwitchMode }: { onSwitchMode?: () => void })
       <header style={{ position: "sticky", top: 0, zIndex: 50, padding: "12px 20px", background: "var(--bg-card)", backdropFilter: "blur(20px)", borderBottom: "1px solid var(--border)" }}>
         <div className="ep-header-wrap" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-            <button onClick={() => window.location.href = "/choose"} style={{ background: "none", border: "1px solid var(--border)", borderRadius: 7, color: "var(--text-muted)", padding: "5px 12px", cursor: "pointer", fontFamily: "var(--font)", fontSize: "0.72rem", fontWeight: 600, transition: "all 0.18s" }}
+            <button onClick={() => router.push("/choose")} style={{ background: "none", border: "1px solid var(--border)", borderRadius: 7, color: "var(--text-muted)", padding: "5px 12px", cursor: "pointer", fontFamily: "var(--font)", fontSize: "0.72rem", fontWeight: 600, transition: "all 0.18s" }}
               onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = "#C36BFF"; (e.currentTarget as HTMLElement).style.color = "#C36BFF"; }}
               onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = "var(--border)"; (e.currentTarget as HTMLElement).style.color = "var(--text-muted)"; }}>
               ← Home
             </button>
-            <div>
-              <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
-                <span style={{ fontWeight: 900, fontSize: "1.3rem", color: "#C36BFF" }}>{store.examName}</span>
-                <span style={{ fontSize: "0.7rem", color: "var(--text-muted)", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase" }}>Exam Planner</span>
-              </div>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <img src="/icons/icon-192.png" alt="LifeStack Logo" style={{ width: 32, height: 32, borderRadius: 8 }} />
+              <div>
+                <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
+                  <span style={{ fontWeight: 900, fontSize: "1.3rem", color: "#C36BFF" }}>{store.examName}</span>
+                  <span style={{ fontSize: "0.7rem", color: "var(--text-muted)", fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase" }}>Exam Planner</span>
+                </div>
               <div style={{ fontSize: "0.68rem", color: "var(--text-muted)", display: "flex", alignItems: "center", gap: 6, marginTop: 2 }}>
                 <span style={{ display: "flex", alignItems: "center", gap: 6 }}><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" /></svg> {store.examDate}</span>
                 <span>·</span>
@@ -1272,6 +1298,7 @@ function CompetitiveExamPlanner({ onSwitchMode }: { onSwitchMode?: () => void })
               </div>
             </div>
           </div>
+        </div>
 
           <div className="ep-header-actions" style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <Countdown examDate={store.examDate} />
@@ -2260,8 +2287,7 @@ function CompetitiveExamPlanner({ onSwitchMode }: { onSwitchMode?: () => void })
                       <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>ch</span>
                     </div>
                   );
-                })
-              }
+                })}
             </div>
             <div style={{ marginBottom: 20 }}>
               <label style={{ display: "block", color: "var(--text-muted)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 6 }}>Notes (optional)</label>
@@ -2284,6 +2310,7 @@ function CompetitiveExamPlanner({ onSwitchMode }: { onSwitchMode?: () => void })
 
 // ─── Mode Chooser ─────────────────────────────────────────────────────────────
 function PlannerModeChooser({ onSelect }: { onSelect: (m: "competitive" | "jobprep") => void }) {
+  const router = useRouter();
   return (
     <div className="exam-planner-theme" style={{ minHeight: "100vh", background: "var(--bg)", display: "flex", alignItems: "center", justifyContent: "center", padding: 24, fontFamily: "var(--font)" }}>
       <style>{`
@@ -2332,7 +2359,7 @@ function PlannerModeChooser({ onSelect }: { onSelect: (m: "competitive" | "jobpr
           </div>
         </div>
         <div style={{ textAlign: "center", marginTop: 32 }}>
-          <button onClick={() => window.location.href = "/choose"} style={{ background: "none", border: "1px solid var(--border)", borderRadius: 8, color: "var(--text-muted)", padding: "8px 18px", cursor: "pointer", fontFamily: "var(--font)", fontWeight: 600, fontSize: "0.82rem" }}>← Back to Home</button>
+          <button onClick={() => router.push("/choose")} style={{ background: "none", border: "1px solid var(--border)", borderRadius: 8, color: "var(--text-muted)", padding: "8px 18px", cursor: "pointer", fontFamily: "var(--font)", fontWeight: 600, fontSize: "0.82rem" }}>← Back to Home</button>
         </div>
       </div>
     </div>

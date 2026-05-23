@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 // --- Types ---
 type OnboardingData = {
@@ -96,6 +97,7 @@ const localDateString = (d: Date = new Date()) => `${d.getFullYear()}-${String(d
 const TODAY = () => localDateString();
 
 function JobPrepLockScreen() {
+  const router = useRouter();
   return (
     <div style={{
       minHeight: "100vh",
@@ -116,7 +118,7 @@ function JobPrepLockScreen() {
           Coming soon. We are polishing this feature for a better experience.
         </p>
         <button
-          onClick={() => { window.location.href = "/choose"; }}
+          onClick={() => { router.push("/choose"); }}
           style={{
             border: "1px solid rgba(255,255,255,0.18)",
             background: "rgba(255,255,255,0.06)",

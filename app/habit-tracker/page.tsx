@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useCallback, useMemo, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { loadHabits, saveHabits } from "@/lib/habitsDb";
 
@@ -424,6 +425,7 @@ function DonutChart({ percent,theme }: { percent:number;theme:"dark"|"light" }) 
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 export default function HabitTrackerPage() {
+  const router = useRouter();
   const now = new Date();
   const initialYear = now.getFullYear() < 2026 ? 2026 : now.getFullYear();
   const initialMonth = now.getMonth();
@@ -437,6 +439,13 @@ export default function HabitTrackerPage() {
   const userIdRef = useRef<string|null>(null);
   const saveTimer = useRef<any>(null);
   const [copyConfirmDs, setCopyConfirmDs] = useState<string | null>(null);
+  const [showAnalytics, setShowAnalytics] = useState(true);
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.innerWidth < 768) {
+      setShowAnalytics(false);
+    }
+  }, []);
 
   // ── Load + realtime sync ──
   useEffect(()=>{
@@ -621,17 +630,20 @@ export default function HabitTrackerPage() {
       <header style={{ position:"sticky",top:0,zIndex:50,padding:"10px 16px",background:"var(--bg-card)",backdropFilter:"blur(16px)",borderBottom:"1px solid var(--border)" }}>
         <div className="habit-tracker-header" style={{ display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:10 }}>
           <div style={{ display:"flex",alignItems:"center",gap:14 }}>
-            <button onClick={()=>window.location.href="/choose"} style={{ background:"none",border:"1px solid var(--border)",borderRadius:7,color:"var(--text-muted)",padding:"5px 12px",cursor:"pointer",fontFamily:"var(--font)",fontSize:"0.7rem",fontWeight:600,letterSpacing:"0.06em",transition:"all 0.18s" }}
+            <button onClick={()=>router.push("/choose")} style={{ background:"none",border:"1px solid var(--border)",borderRadius:7,color:"var(--text-muted)",padding:"5px 12px",cursor:"pointer",fontFamily:"var(--font)",fontSize:"0.7rem",fontWeight:600,letterSpacing:"0.06em",transition:"all 0.18s" }}
               onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.borderColor="var(--grad-start)";(e.currentTarget as HTMLElement).style.color="var(--grad-start)";}}
               onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.borderColor="var(--border)";(e.currentTarget as HTMLElement).style.color="var(--text-muted)";}}
             >← Home</button>
-            <div>
-              <div style={{ display:"flex",alignItems:"baseline",gap:7 }}>
-                <span className="logo-habit">HABIT</span><span className="logo-tracker">TRACKER</span>
-              </div>
-              <div style={{ display:"flex",alignItems:"center",gap:5,marginTop:2 }}>
-                <span style={{ fontSize:"0.55rem",background:"var(--gradient)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent" }}>✦</span>
-                <span className="logo-sub">Consistency Protocol</span>
+            <div style={{ display:"flex",alignItems:"center",gap:10 }}>
+              <img src="/icons/icon-192.png" alt="LifeStack Logo" style={{ width:32, height:32, borderRadius:8 }} />
+              <div>
+                <div style={{ display:"flex",alignItems:"baseline",gap:7 }}>
+                  <span className="logo-habit">HABIT</span><span className="logo-tracker">TRACKER</span>
+                </div>
+                <div style={{ display:"flex",alignItems:"center",gap:5,marginTop:2 }}>
+                  <span style={{ fontSize:"0.55rem",background:"var(--gradient)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent" }}>✦</span>
+                  <span className="logo-sub">Consistency Protocol</span>
+                </div>
               </div>
             </div>
           </div>
@@ -664,14 +676,14 @@ export default function HabitTrackerPage() {
           <div style={{ width:1,height:28,background:"var(--border)" }}/>
           <div style={{ display:"flex",alignItems:"center",gap:6 }}>
             <span style={{ fontFamily:"var(--font)",fontSize:"0.58rem",fontWeight:700,letterSpacing:"0.12em",color:"var(--text-muted)",textTransform:"uppercase",minWidth:36 }}>Month</span>
-            <div style={{ display:"flex",gap:3,flexWrap:"wrap",maxWidth:"calc(100vw - 120px)",overflowX:"auto" }}>
+            <div className="month-scroll-container" style={{ display:"flex",gap:3,flexWrap:"wrap",maxWidth:"calc(100vw - 120px)",overflowX:"auto" }}>
               {MONTHS.map((m,i)=>(<button key={m} onClick={()=>{ setSelMonth(i);setSelWeek(0); }} style={{ fontFamily:"var(--font)",fontSize:"0.68rem",fontWeight:600,padding:"3px 8px",borderRadius:5,border:"1px solid",cursor:"pointer",transition:"all 0.18s",borderColor:selMonth===i?"var(--grad-mid)":"var(--border)",background:selMonth===i?(theme==="light"?"rgba(0,0,0,0.08)":"rgba(74,144,255,0.14)"):"transparent",color:selMonth===i?"var(--grad-mid)":"var(--text-muted)" }}>{m}</button>))}
             </div>
           </div>
           <div style={{ width:1,height:28,background:"var(--border)" }}/>
           <div style={{ display:"flex",alignItems:"center",gap:6 }}>
             <span style={{ fontFamily:"var(--font)",fontSize:"0.58rem",fontWeight:700,letterSpacing:"0.12em",color:"var(--text-muted)",textTransform:"uppercase",minWidth:30 }}>Week</span>
-            <div style={{ display:"flex",gap:4 }}>
+            <div className="week-scroll-container" style={{ display:"flex",gap:4 }}>
               {weeksInMonth.map((wDates,i)=>{ const s=wDates[0].getDate(),e=wDates[wDates.length-1].getDate(); return (
                 <button key={i} onClick={()=>setSelWeek(i)} style={{ fontFamily:"var(--font)",fontSize:"0.68rem",fontWeight:600,padding:"4px 10px",borderRadius:5,border:"1px solid",cursor:"pointer",transition:"all 0.18s",borderColor:safeWeek===i?"var(--grad-end)":"var(--border)",background:safeWeek===i?(theme==="light"?"rgba(0,0,0,0.08)":"rgba(40,215,255,0.12)"):"transparent",color:safeWeek===i?"var(--grad-end)":"var(--text-muted)" }}>
                   W{i+1}<span style={{ fontSize:"0.55rem",marginLeft:3,opacity:0.6 }}>{s}–{e}</span>
@@ -682,30 +694,64 @@ export default function HabitTrackerPage() {
         </div>
       </header>
 
+      {/* ── Toggle Analytics Bar ── */}
+      <div className="analytics-toggle-container" style={{ margin: "16px 12px 0" }}>
+        <button 
+          onClick={() => setShowAnalytics(prev => !prev)}
+          style={{
+            width: "100%",
+            padding: "10px 16px",
+            background: "var(--bg-card)",
+            border: "1px solid var(--border)",
+            borderRadius: 12,
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 8,
+            fontFamily: "var(--font)",
+            fontSize: "0.74rem",
+            fontWeight: 700,
+            letterSpacing: "0.06em",
+            textTransform: "uppercase",
+            color: "var(--text-sub)",
+            transition: "all 0.2s ease",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.05)"
+          }}
+          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = "var(--border-act)"; (e.currentTarget as HTMLElement).style.color = "var(--text)"; }}
+          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = "var(--border)"; (e.currentTarget as HTMLElement).style.color = "var(--text-sub)"; }}
+        >
+          <span>{showAnalytics ? "Hide Analytics 📊" : "Show Analytics 📊"}</span>
+          <span style={{ transition: "transform 0.2s", display: "inline-block", transform: showAnalytics ? "rotate(180deg)" : "rotate(0deg)" }}>▼</span>
+        </button>
+      </div>
+
       {/* ── Analytics ── */}
-      <section className="habit-tracker-analytics" style={{ margin:"16px 12px 0",background:"var(--bg-card)",border:"1px solid var(--border)",borderRadius:14,padding:"14px 16px",display:"grid",gridTemplateColumns:"1fr 1px 1fr 1px auto",gap:"0 16px",alignItems:"stretch" }}>
-        <div className="analytics-line-chart">
-          <div style={{ display:"flex",alignItems:"baseline",gap:7,marginBottom:8 }}>
-            <span style={{ fontFamily:"var(--font)",fontSize:"0.76rem",fontWeight:700,color:"var(--text)" }}>Monthly</span>
-            <span style={{ fontFamily:"var(--font)",fontSize:"0.72rem",fontWeight:500,color:"var(--text-sub)" }}>{MONTHS[selMonth]} {selYear} · line per week</span>
+      {showAnalytics && (
+        <section className="habit-tracker-analytics" style={{ margin:"16px 12px 0",background:"var(--bg-card)",border:"1px solid var(--border)",borderRadius:14,padding:"14px 16px",display:"grid",gridTemplateColumns:"1fr 1px 1fr 1px auto",gap:"0 16px",alignItems:"stretch" }}>
+          <div className="analytics-line-chart">
+            <div style={{ display:"flex",alignItems:"baseline",gap:7,marginBottom:8 }}>
+              <span style={{ fontFamily:"var(--font)",fontSize:"0.76rem",fontWeight:700,color:"var(--text)" }}>Monthly</span>
+              <span style={{ fontFamily:"var(--font)",fontSize:"0.72rem",fontWeight:500,color:"var(--text-sub)" }}>{MONTHS[selMonth]} {selYear} · line per week</span>
+            </div>
+            <div style={{ height:180 }}><LineGraph data={monthGraphData} labels={graphLabels} activeIdx={safeWeek} theme={theme}/></div>
           </div>
-          <div style={{ height:180 }}><LineGraph data={monthGraphData} labels={graphLabels} activeIdx={safeWeek} theme={theme}/></div>
-        </div>
-        <div className="analytics-divider habit-tracker-analytics-divider" style={{ background:"var(--border)" }}/>
-        <div className="analytics-bar-chart">
-          <div style={{ display:"flex",alignItems:"baseline",gap:7,marginBottom:8 }}>
-            <span style={{ fontFamily:"var(--font)",fontSize:"0.76rem",fontWeight:700,color:"var(--text)" }}>Week {safeWeek+1}</span>
-            <span style={{ fontFamily:"var(--font)",fontSize:"0.72rem",fontWeight:500,color:"var(--text-sub)" }}>{rangeLabel} · bar per day</span>
+          <div className="analytics-divider habit-tracker-analytics-divider" style={{ background:"var(--border)" }}/>
+          <div className="analytics-bar-chart">
+            <div style={{ display:"flex",alignItems:"baseline",gap:7,marginBottom:8 }}>
+              <span style={{ fontFamily:"var(--font)",fontSize:"0.76rem",fontWeight:700,color:"var(--text)" }}>Week {safeWeek+1}</span>
+              <span style={{ fontFamily:"var(--font)",fontSize:"0.72rem",fontWeight:500,color:"var(--text-sub)" }}>{rangeLabel} · bar per day</span>
+            </div>
+            <div style={{ height:180 }}><BarGraph entries={weekBarData} theme={theme}/></div>
           </div>
-          <div style={{ height:180 }}><BarGraph entries={weekBarData} theme={theme}/></div>
-        </div>
-        <div className="analytics-divider habit-tracker-analytics-divider" style={{ background:"var(--border)" }}/>
-        <div className="analytics-donut" style={{ width:140,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:4 }}>
-          <span style={{ fontFamily:"var(--font)",fontSize:"0.68rem",fontWeight:700,color:"var(--text)" }}>{MONTHS[selMonth]} W{safeWeek+1}</span>
-          <div style={{ width:130,height:130 }}><DonutChart percent={weekPct} theme={theme}/></div>
-          <span style={{ fontFamily:"var(--font)",fontSize:"0.78rem",fontWeight:600,color:"var(--text-sub)",textAlign:"center" }}>{totalDone}/{allHabits.length} habits</span>
-        </div>
-      </section>
+          <div className="analytics-divider habit-tracker-analytics-divider" style={{ background:"var(--border)" }}/>
+          <div className="analytics-donut" style={{ width:140,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:4 }}>
+            <span style={{ fontFamily:"var(--font)",fontSize:"0.68rem",fontWeight:700,color:"var(--text)" }}>{MONTHS[selMonth]} W{safeWeek+1}</span>
+            <div style={{ width:130,height:130 }}><DonutChart percent={weekPct} theme={theme}/></div>
+            <span style={{ fontFamily:"var(--font)",fontSize:"0.78rem",fontWeight:600,color:"var(--text-sub)",textAlign:"center" }}>{totalDone}/{allHabits.length} habits</span>
+          </div>
+        </section>
+      )}
 
       {/* ── Habit Grid ── */}
       <main style={{ padding:"12px 12px 80px" }}>
